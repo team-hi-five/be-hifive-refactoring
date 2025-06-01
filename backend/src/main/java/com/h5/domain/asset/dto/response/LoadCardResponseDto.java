@@ -1,14 +1,17 @@
 package com.h5.domain.asset.dto.response;
 
-import lombok.*;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-@Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class LoadCardResponseDto {
-    List<CardAssetResponseDto> cardAssetList;
+
+    @Schema(description = "카드 자산 목록")
+    private List<CardAssetResponseDto> cardAssetList;
 }

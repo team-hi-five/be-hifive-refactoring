@@ -1,6 +1,5 @@
 package com.h5.domain.session.service;
 
-import com.h5.global.exception.ScheduleNotFoundException;
 import com.h5.domain.schedule.entity.ConsultMeetingScheduleEntity;
 import com.h5.domain.schedule.entity.GameMeetingScheduleEntity;
 import com.h5.domain.schedule.repository.ConsultMeetingScheduleRepository;

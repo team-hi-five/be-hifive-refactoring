@@ -11,10 +11,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
-@Setter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor
 @Entity
 @Table(name = "game_chapter")
 public class GameChapterEntity {

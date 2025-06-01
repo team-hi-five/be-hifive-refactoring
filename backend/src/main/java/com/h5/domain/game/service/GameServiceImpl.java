@@ -20,8 +20,6 @@ import com.h5.domain.game.repository.AiLogRepository;
 import com.h5.domain.game.repository.ChildGameChapterRepository;
 import com.h5.domain.game.repository.ChildGameStageRepository;
 import com.h5.domain.game.repository.GameLogRepository;
-import com.h5.global.exception.GameNotFoundException;
-import com.h5.global.exception.UserNotFoundException;
 import com.h5.domain.statistic.entity.StatisticEntity;
 import com.h5.domain.statistic.repository.StatisticRepository;
 import jakarta.transaction.Transactional;

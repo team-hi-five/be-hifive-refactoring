@@ -9,8 +9,6 @@ import com.h5.domain.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.consultant.repository.ConsultantUserRepository;
 import com.h5.domain.file.entity.FileEntity;
 import com.h5.domain.file.service.FileService;
-import com.h5.global.exception.MailSendException;
-import com.h5.global.exception.UserNotFoundException;
 import com.h5.global.util.MailUtil;
 import com.h5.global.util.PasswordUtil;
 import com.h5.domain.parent.entity.ParentUserEntity;

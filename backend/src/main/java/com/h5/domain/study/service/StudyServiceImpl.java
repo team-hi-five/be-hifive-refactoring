@@ -3,8 +3,6 @@ package com.h5.domain.study.service;
 import com.h5.domain.asset.repository.GameChapterRepository;
 import com.h5.domain.asset.repository.GameStageRepository;
 import com.h5.domain.child.repository.ChildUserRepository;
-import com.h5.global.exception.GameNotFoundException;
-import com.h5.global.exception.UserNotFoundException;
 import com.h5.domain.study.dto.request.EndStudyChapterRequestDto;
 import com.h5.domain.study.dto.request.SaveStudyLogRequestDto;
 import com.h5.domain.study.dto.request.StartStudyChapterRequsetDto;

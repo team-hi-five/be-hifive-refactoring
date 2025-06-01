@@ -1,15 +1,16 @@
 package com.h5.domain.auth.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.*;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class GetUserInfoResponseDto {
+
+    @Schema(description = "이름", example = "정찬환")
     private String name;
+
+    @Schema(description = "권한", example = "PARENT")
     private String role;
 }

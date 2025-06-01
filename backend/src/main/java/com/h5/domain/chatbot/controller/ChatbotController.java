@@ -2,6 +2,7 @@ package com.h5.domain.chatbot.controller;
 
 import com.h5.domain.chatbot.dto.request.InsertChatbotRequestDto;
 import com.h5.domain.chatbot.service.ChatbotService;
+import com.h5.global.response.ResultResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +23,8 @@ public class ChatbotController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> insertChatbot(@Valid @RequestBody InsertChatbotRequestDto insertChatbotRequestDto) {
-        log.info("insert chatbot request: {}", insertChatbotRequestDto.toString());
-        return ResponseEntity.ok(chatbotService.insertChatbot(insertChatbotRequestDto));
+    public ResultResponse<?> insertChatbot(@Valid @RequestBody InsertChatbotRequestDto insertChatbotRequestDto) {
+        return ResultResponse.success(chatbotService.insertChatbot(insertChatbotRequestDto));
     }
 
     @GetMapping("/get-dates/chatbot")

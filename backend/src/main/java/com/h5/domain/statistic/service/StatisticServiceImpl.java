@@ -7,8 +7,6 @@ import com.h5.domain.game.entity.ChildGameChapterEntity;
 import com.h5.domain.game.entity.GameLogEntity;
 import com.h5.domain.game.repository.ChildGameChapterRepository;
 import com.h5.domain.game.repository.GameLogRepository;
-import com.h5.global.exception.StatisticNotFoundException;
-import com.h5.global.exception.UserNotFoundException;
 import com.h5.domain.statistic.dto.response.DataAnalysisResponseDto;
 import com.h5.domain.statistic.dto.response.GetGameVideoDatesResponseDto;
 import com.h5.domain.statistic.dto.response.GetGameVideoLengthResponseDto;

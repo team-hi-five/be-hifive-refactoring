@@ -7,7 +7,6 @@ import com.h5.domain.deleterequest.entity.DeleteUserRequestEntity;
 import com.h5.domain.deleterequest.repository.DeleteUserRequestRepository;
 import com.h5.domain.file.entity.FileEntity;
 import com.h5.domain.file.service.FileService;
-import com.h5.global.exception.UserNotFoundException;
 import com.h5.domain.parent.entity.ParentUserEntity;
 import com.h5.domain.parent.repository.ParentUserRepository;
 import jakarta.transaction.Transactional;

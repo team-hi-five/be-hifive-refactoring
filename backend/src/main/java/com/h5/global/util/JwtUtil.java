@@ -1,6 +1,5 @@
 package com.h5.global.util;
 
-import com.h5.global.exception.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;

@@ -13,7 +13,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "game_stage")
 public class GameStageEntity {

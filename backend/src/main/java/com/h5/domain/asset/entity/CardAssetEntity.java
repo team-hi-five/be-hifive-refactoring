@@ -3,11 +3,9 @@ package com.h5.domain.asset.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "card_asset")
 public class CardAssetEntity {
@@ -22,12 +20,10 @@ public class CardAssetEntity {
     private GameStageEntity gameStageEntity;
 
     @Size(max = 255)
-    @NotNull
     @Column(name = "card_front", nullable = false)
     private String cardFront;
 
     @Size(max = 255)
-    @NotNull
     @Column(name = "card_back", nullable = false)
     private String cardBack;
 

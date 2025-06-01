@@ -1,4 +1,4 @@
-package com.h5.domain.auth.model;
+package com.h5.domain.auth.userdetails;
 
 import com.h5.domain.parent.entity.ParentUserEntity;
 import org.springframework.security.core.GrantedAuthority;

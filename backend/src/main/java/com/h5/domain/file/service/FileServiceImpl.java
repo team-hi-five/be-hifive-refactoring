@@ -3,8 +3,6 @@ package com.h5.domain.file.service;
 import com.h5.domain.file.dto.response.GetFileUrlResponseDto;
 import com.h5.domain.file.entity.FileEntity;
 import com.h5.domain.file.repository.FileRepository;
-import com.h5.global.exception.FileNotFoundException;
-import com.h5.global.exception.FileUploadIOException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;

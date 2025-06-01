@@ -7,6 +7,10 @@ public enum DomainErrorCode implements ErrorCode {
 
     ACCESS_TOKEN_NOTFOUND(HttpStatus.NOT_FOUND, "AUTH-001", "Access Token Not Found"),
 
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-001", "User Not Found"),
+
+    GAME_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "GAME-ASSET-001", "Game Asset Not Found"),
+
     ;
 
     private final HttpStatus httpStatus;
