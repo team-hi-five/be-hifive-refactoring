@@ -11,8 +11,8 @@ import lombok.Getter;
 public class GetStageResponseDto {
 
     @Schema(description = "현재 클리어된 챕터 번호", example = "2")
-    private int chapter;
+    private final Integer chapter;
 
     @Schema(description = "현재 클리어된 스테이지 번호", example = "3")
-    private int stage;
+    private final Integer stage;
 }

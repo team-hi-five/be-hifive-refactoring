@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class MyProfileResponseDto {
+public class MyProfileResponse {
     private String profileImgUrl;
     private String name;
     private String phone;

@@ -13,5 +13,5 @@ import java.util.List;
 public class LoadCardResponseDto {
 
     @Schema(description = "카드 자산 목록")
-    private List<CardAssetResponseDto> cardAssetList;
+    private final List<CardAssetResponseDto> cardAssetList;
 }

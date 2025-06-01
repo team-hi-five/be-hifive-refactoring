@@ -12,5 +12,5 @@ import lombok.Setter;
 public class RefreshAccessTokenResponseDto {
 
     @Schema(description = "재발급된 액세스 토큰", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
-    private String accessToken;
+    private final String accessToken;
 }

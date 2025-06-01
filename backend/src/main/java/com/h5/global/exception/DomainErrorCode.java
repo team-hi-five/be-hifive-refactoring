@@ -11,6 +11,13 @@ public enum DomainErrorCode implements ErrorCode {
 
     GAME_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "GAME-ASSET-001", "Game Asset Not Found"),
 
+    CHATBOT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHATBOT-001", "ChatBot Not Found"),
+    CHATBOT_ALREADY_SAVED(HttpStatus.CONFLICT, "CHATBOT-001", "ChatBot Already Saved"),
+
+    MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL-001", "Mail Send Failed"),
+
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-001", "Authentication Failed"),
+
     ;
 
     private final HttpStatus httpStatus;

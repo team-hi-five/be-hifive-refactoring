@@ -17,6 +17,16 @@ public class ResultResponse<T> {
     private String message;
     private T results;
 
+
+    public static <T> ResultResponse<T> created(T results) {
+        return ResultResponse.<T>builder()
+                .status(HttpStatus.CREATED.value())
+                .code(String.valueOf(HttpStatus.CREATED.value()))
+                .message(DEFAULT_SUCCESS_MESSAGE)
+                .results(results)
+                .build();
+    }
+
     public static <T> ResultResponse<T> success() {
         return ResultResponse.<T>builder()
                 .status(HttpStatus.OK.value())

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,9 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Document(collection = "chatbotDB")
+@CompoundIndexes({
+        @CompoundIndex(name = "idx_childId_date", def = "{'childUserId': 1, 'chatBotUseDttm': 1}")
+})
 public class ChatBotDocument {
 
     @NotNull
@@ -37,5 +42,4 @@ public class ChatBotDocument {
 
     @NotNull
     private String message;
-
 }

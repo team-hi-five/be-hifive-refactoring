@@ -9,8 +9,8 @@ import lombok.*;
 public class GetUserInfoResponseDto {
 
     @Schema(description = "이름", example = "정찬환")
-    private String name;
+    private final String name;
 
     @Schema(description = "권한", example = "PARENT")
-    private String role;
+    private final String role;
 }

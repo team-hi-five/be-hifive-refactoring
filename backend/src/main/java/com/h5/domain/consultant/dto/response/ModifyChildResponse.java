@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class RegisterParentAccountResponseDto {
-    private int parentUserId;
+public class ModifyChildResponse {
     private int childUserId;
 }

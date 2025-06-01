@@ -1,4 +1,4 @@
-package com.h5.global.config;
+package com.h5.global.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class SearchChildResponseDto {
+public class SearchChildResponse {
     private int childUserId;
     private String childProfileUrl;
     private String childUserName;

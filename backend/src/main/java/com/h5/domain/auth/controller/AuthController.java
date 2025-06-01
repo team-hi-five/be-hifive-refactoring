@@ -4,7 +4,7 @@ import com.h5.domain.auth.dto.request.LoginRequestDto;
 import com.h5.domain.auth.dto.response.GetUserInfoResponseDto;
 import com.h5.domain.auth.dto.response.LoginResponseDto;
 import com.h5.domain.auth.dto.response.RefreshAccessTokenResponseDto;
-import com.h5.domain.auth.service.AuthService;
+import com.h5.domain.auth.service.AuthorizeService;
 import com.h5.global.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Auth API", description = "인증 관련 API")
 public class AuthController {
 
-    private final AuthService authService;
+    private final AuthorizeService authorizeService;
 
 
     @Operation(
@@ -41,7 +41,7 @@ public class AuthController {
             )
             @org.springframework.web.bind.annotation.RequestBody LoginRequestDto loginRequestDto
     ) {
-        return ResultResponse.success(authService.authenticateAndGenerateToken(loginRequestDto));
+        return ResultResponse.success(authorizeService.authenticateAndGenerateToken(loginRequestDto));
     }
 
     @Operation(
@@ -54,7 +54,7 @@ public class AuthController {
     })
     @PostMapping("/logout")
     public ResultResponse<Void> logout() {
-        authService.logout();
+        authorizeService.logout();
         return ResultResponse.success();
     }
 
@@ -68,7 +68,7 @@ public class AuthController {
     })
     @PostMapping("/refresh")
     public ResultResponse<RefreshAccessTokenResponseDto> refresh() {
-        return ResultResponse.success(authService.refreshAccessToken());
+        return ResultResponse.success(authorizeService.refreshAccessToken());
     }
 
     @Operation(
@@ -81,6 +81,6 @@ public class AuthController {
     })
     @GetMapping
     public ResultResponse<GetUserInfoResponseDto> getUserInfo() {
-        return ResultResponse.success(authService.getUserInfo());
+        return ResultResponse.success(authorizeService.getUserInfo());
     }
 }

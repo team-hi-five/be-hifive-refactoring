@@ -29,16 +29,13 @@ public class ChildUserEntity {
     @Column(name = "child_user_id", nullable = false)
     private Integer id;
 
-    @NotNull
     @Lob
     @Column(name = "interest", nullable = false)
     private String interest;
 
-    @NotNull
     @Column(name = "first_consult_dt", nullable = false)
     private LocalDate firstConsultDt;
 
-    @NotNull
     @Column(name = "birth", nullable = false)
     private LocalDate birth;
 
@@ -53,17 +50,13 @@ public class ChildUserEntity {
     @Column(name = "clear_chapter")
     private Integer clearChapter;
 
-    @Size(max = 10)
-    @NotNull
     @Column(name = "name", nullable = false, length = 10)
     private String name;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent_user_id", nullable = false)
     private ParentUserEntity parentUserEntity;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "consultant_user_id", nullable = false)
     private ConsultantUserEntity consultantUserEntity;

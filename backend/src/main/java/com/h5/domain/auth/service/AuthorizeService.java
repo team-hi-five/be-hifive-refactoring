@@ -32,7 +32,7 @@ import java.util.Objects;
  */
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthorizeService {
 
     private final RedisService redisService;
     private final AuthenticationManager authenticationManager;

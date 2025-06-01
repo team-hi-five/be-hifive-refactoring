@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class GetMyChildrenResponseDto {
+public class GetMyChildrenResponse {
     private int childUserID;
     private String profileImgUrl;
     private String childName;
