@@ -1,43 +1,48 @@
 package com.h5.domain.deleterequest.controller;
 
+import com.h5.domain.auth.service.AuthenticationService;
+import com.h5.domain.deleterequest.dto.response.DeleteRequestResponseDto;
+import com.h5.domain.deleterequest.dto.response.DeleteUserRequestAprproveResponseDto;
+import com.h5.domain.deleterequest.dto.response.DeleteUserRequestRejectResponseDto;
+import com.h5.domain.deleterequest.dto.response.GetMyDeleteResponseDto;
 import com.h5.domain.deleterequest.service.DeleteUserRequestService;
+import com.h5.global.response.ResultResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/user/delete")
+@RequiredArgsConstructor
+@RequestMapping("/delete-requests")
 public class DeleteUserRequestController {
 
     private final DeleteUserRequestService deleteUserRequestService;
+    private final AuthenticationService authenticationService;
 
-    @Autowired
-    public DeleteUserRequestController(DeleteUserRequestService deleteUserRequestService) {
-        this.deleteUserRequestService = deleteUserRequestService;
+    @PostMapping
+    public ResultResponse<DeleteRequestResponseDto> deleteRequest() {
+        String parentEmail = authenticationService.getCurrentUserEmail();
+        return ResultResponse.success(deleteUserRequestService.deleteRequest(parentEmail));
     }
 
-    // 탈퇴 요청
-    @PostMapping("/request")
-    public ResponseEntity<?> deleteRequest() {
-        return ResponseEntity.ok(deleteUserRequestService.deleteRequest());
+    @PatchMapping("/{deleteUserRequestId}/approve")
+    public ResultResponse<DeleteUserRequestAprproveResponseDto> approve(@Valid @PathVariable Integer deleteUserRequestId) {
+        deleteUserRequestService.deleteApprove(deleteUserRequestId);
+        return ResultResponse.success(HttpStatus.NO_CONTENT);
     }
 
-    // 탈퇴 승인
-    @GetMapping("/approve")
-    public ResponseEntity<?> approve(@Valid @RequestParam Integer deleteUserRequestId) {
-        return ResponseEntity.ok(deleteUserRequestService.deleteApprove(deleteUserRequestId));
+    @PatchMapping("/{deleteUserRequestId}/reject")
+    public ResultResponse<DeleteUserRequestRejectResponseDto> reject(@Valid @PathVariable Integer deleteUserRequestId) {
+        deleteUserRequestService.deleteReject(deleteUserRequestId);
+        return ResultResponse.success(HttpStatus.NO_CONTENT);
     }
 
-    // 탈퇴 거절
-    @GetMapping("/reject")
-    public ResponseEntity<?> reject(@Valid @RequestParam Integer deleteUserRequestId) {
-        return ResponseEntity.ok(deleteUserRequestService.deleteReject(deleteUserRequestId));
-    }
-
-    // 내 탈퇴 요청 리스트
-    @PostMapping("/get-my-delete")
-    public ResponseEntity<?> getMyDelete() {
-        return ResponseEntity.ok(deleteUserRequestService.getMyDelete());
+    @GetMapping
+    public ResultResponse<List<GetMyDeleteResponseDto>> getMyDelete() {
+        String consultantEmail = authenticationService.getCurrentUserEmail();
+        return ResultResponse.success(deleteUserRequestService.getMyDelete(consultantEmail));
     }
 }

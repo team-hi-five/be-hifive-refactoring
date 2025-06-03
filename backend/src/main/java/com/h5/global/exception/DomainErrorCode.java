@@ -8,6 +8,7 @@ public enum DomainErrorCode implements ErrorCode {
     ACCESS_TOKEN_NOTFOUND(HttpStatus.NOT_FOUND, "AUTH-001", "Access Token Not Found"),
 
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER-001", "User Not Found"),
+    OLD_PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "OLD-PASSWORD-MISMATCH", "Old Password Mismatch"),
 
     GAME_ASSET_NOT_FOUND(HttpStatus.NOT_FOUND, "GAME-ASSET-001", "Game Asset Not Found"),
 
@@ -17,6 +18,8 @@ public enum DomainErrorCode implements ErrorCode {
     MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL-001", "Mail Send Failed"),
 
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-001", "Authentication Failed"),
+
+    DELETE_REQUEST_DUPLICATED(HttpStatus.CONFLICT, "DELETE-001", "Delete Request Duplicated"),
 
     ;
 

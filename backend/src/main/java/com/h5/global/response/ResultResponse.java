@@ -44,6 +44,14 @@ public class ResultResponse<T> {
                 .build();
     }
 
+    public static <T> ResultResponse<T> success(HttpStatus status) {
+        return ResultResponse.<T>builder()
+                .status(status.value())
+                .code(String.valueOf(status.value()))
+                .message(DEFAULT_SUCCESS_MESSAGE)
+                .build();
+    }
+
     public static <T> ResultResponse<T> success(HttpStatus status, T results) {
         return ResultResponse.<T>builder()
                 .status(status.value())

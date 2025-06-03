@@ -6,12 +6,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
-@Builder
 @Table(name = "delete_user_request")
 public class DeleteUserRequestEntity {
     @Id
@@ -21,10 +23,10 @@ public class DeleteUserRequestEntity {
 
     @NotNull
     @Column(name = "delete_request_dttm")
-    private String deleteRequestDttm;
+    private LocalDateTime deleteRequestDttm;
 
     @Column(name = "delete_confirm_dttm")
-    private String deleteConfirmDttm;
+    private LocalDateTime deleteConfirmDttm;
 
     public enum Status {
         P, A, R
@@ -35,14 +37,29 @@ public class DeleteUserRequestEntity {
     @Column(name = "status", nullable = false)
     private Status status;
 
+    @Column(name = "parent_user_id")
+    private Integer parentUserId;
+
+    @Column(name = "consultant_user_id")
+    private Integer consultantUserId;
+
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "parent_user_id", nullable = false)
+    @JoinColumn(name = "parent_user_id", nullable = false, insertable = false, updatable = false)
     private ParentUserEntity parentUser;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "consultant_user_id", nullable = false)
+    @JoinColumn(name = "consultant_user_id", nullable = false, insertable = false, updatable = false)
     private ConsultantUserEntity consultantUser;
 
+    @Builder
+    public DeleteUserRequestEntity(Integer id, LocalDateTime deleteRequestDttm, LocalDateTime deleteConfirmDttm, Status status, Integer parentUserId, Integer consultantUserId) {
+        this.id = id;
+        this.deleteRequestDttm = deleteRequestDttm;
+        this.deleteConfirmDttm = deleteConfirmDttm;
+        this.status = status;
+        this.parentUserId = parentUserId;
+        this.consultantUserId = consultantUserId;
+    }
 }

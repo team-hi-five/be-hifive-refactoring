@@ -1,11 +1,16 @@
 package com.h5.domain.consultant.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
+@NoArgsConstructor
+@Schema(description = "임시 비밀번호 요청 DTO")
 public class UpdateToTempPwdRequestDto {
-    private String name;
+
+    @Schema(description = "사용자 이메일", example = "user@example.com")
     private String email;
 }

@@ -38,15 +38,11 @@ public class FileController {
         return ResponseEntity.ok(fileService.upload(multipartFileList, tblTypes, tblIds));
     }
 
-
-
-    // 파일 URL 조회
     @GetMapping("/urls/{tblType}/{tblId}")
     public ResponseEntity<?> getFileUrls(@PathVariable FileEntity.TblType tblType, @PathVariable Integer tblId) {
         return ResponseEntity.ok(fileService.getFileUrl(tblType, tblId));
     }
 
-    // 파일 다운로드
     @GetMapping("/download/{fileId}")
     public ResponseEntity<?> downloadFile(@PathVariable Integer fileId) {
         return ResponseEntity.ok()
@@ -55,7 +51,6 @@ public class FileController {
                 .body(fileService.downloadFile(fileId));
     }
 
-    // 파일 삭제
     @DeleteMapping("/{fileId}")
     public ResponseEntity<String> deleteFile(@PathVariable Integer fileId) {
         fileService.deleteFile(fileId);

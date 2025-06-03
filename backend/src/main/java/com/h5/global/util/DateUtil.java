@@ -12,7 +12,7 @@ public class DateUtil {
         return Period.between(birth, LocalDate.now()).getYears();
     }
 
-    public static int calculateAge(LocalDate birthDate, LocalDate date) {
+    public static int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }

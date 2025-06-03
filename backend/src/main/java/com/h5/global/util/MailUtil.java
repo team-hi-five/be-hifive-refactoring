@@ -43,13 +43,13 @@ public class MailUtil {
     }
 
 
-    public void sendTempPasswordEmail(String to, String userId, String tempPwd) {
-        String text = String.format(TEMP_PWD_MESSAGE_TEMPLATE, userId, tempPwd);
+    public void sendTempPasswordEmail(String to, String tempPwd) {
+        String text = String.format(TEMP_PWD_MESSAGE_TEMPLATE, to, tempPwd);
         sendEmail(to, TEMP_PWD_SUBJECT, text);
     }
 
-    public void sendRegistrationEmail(String to, String userId, String initPwd) {
-        String text = String.format(REGIST_MESSAGE_TEMPLATE, userId, initPwd);
+    public void sendRegistrationEmail(String to, String initPwd) {
+        String text = String.format(REGIST_MESSAGE_TEMPLATE, to, initPwd);
         sendEmail(to, REGIST_SUBJECT, text);
     }
 

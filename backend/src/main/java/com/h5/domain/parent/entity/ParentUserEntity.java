@@ -8,6 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -47,24 +50,40 @@ public class ParentUserEntity {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "create_dttm")
-    private String createDttm;
+    private LocalDateTime createDttm;
 
     @Column(name = "delete_dttm")
-    private String deleteDttm;
+    private LocalDateTime deleteDttm;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "update_dttm", insertable = false, updatable = false)
-    private String updateDttm;
+    private LocalDateTime updateDttm;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "consultant_user_id", nullable = false)
-    private ConsultantUserEntity consultantUserEntity;
+    @Column(name = "consultant_user_id")
+    private Integer consultantUserId;
 
-    @OneToMany(mappedBy = "parentUserEntity")
-    private Set<ChildUserEntity> childUserEntities = new LinkedHashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "consultant_user_id", nullable = false, insertable = false, updatable = false)
+    private ConsultantUserEntity consultantUserEntity;
 
     @Column(name = "temp_pwd")
     private boolean tempPwd;
 
+    @OneToMany(mappedBy = "parentUserEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<ChildUserEntity> childUserEntities = new HashSet<>();
+
+    @Builder
+    public ParentUserEntity(Integer id, String name, String email, String pwd, String phone, LocalDateTime createDttm, LocalDateTime deleteDttm, LocalDateTime updateDttm, Integer consultantUserId, boolean tempPwd) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.pwd = pwd;
+        this.phone = phone;
+        this.createDttm = createDttm;
+        this.deleteDttm = deleteDttm;
+        this.updateDttm = updateDttm;
+        this.consultantUserId = consultantUserId;
+        this.tempPwd = tempPwd;
+    }
 }
