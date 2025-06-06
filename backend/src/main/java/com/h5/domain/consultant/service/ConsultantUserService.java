@@ -42,69 +42,7 @@ public class ConsultantUserService {
     private final AuthenticationService authenticationService;
     private final ParentUserService parentUserService;
     private final ChildUserService childUserService;
-    private final PasswordUtil passwordUtil;
-    private final PasswordEncoder passwordEncoder;
-    private final MailUtil mailUtil;
     private final ConsultantMapper consultantMapper;
-
-    /**
-     * 상담사 이름(name)과 전화번호(phone)을 기반으로 이메일을 조회합니다.
-     *
-     * @param name  조회할 상담사 이름
-     * @param phone 조회할 상담사 전화번호
-     * @return {@link GetEmailResponse} 조회된 이메일 정보를 담은 DTO
-     * @throws BusinessException {@link DomainErrorCode#USER_NOT_FOUND} 조회된 사용자가 없을 경우 발생
-     */
-    public GetEmailResponse findEmail(String name, String phone) {
-        String email = consultantUserRepository.findEmailByNameAndPhone(name, phone)
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND))
-                .getEmail();
-
-        return GetEmailResponse.builder()
-                .email(email)
-                .build();
-    }
-
-    /**
-     * 상담사 이메일(email)에 대해 임시 비밀번호를 생성하고, 해당 비밀번호를 이메일로 전송합니다.
-     *
-     * @param email 임시 비밀번호를 발급할 상담사 이메일
-     * @throws BusinessException {@link DomainErrorCode#USER_NOT_FOUND} 해당 이메일의 사용자가 없을 경우 발생
-     */
-    public void issueTemporaryPassword(String email) {
-        ConsultantUserEntity consultantUser = consultantUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
-
-        String tempPwd = passwordUtil.generatePassword();
-        consultantUser.setPwd(passwordEncoder.encode(tempPwd));
-        consultantUser.setTempPwd(true);
-
-        consultantUserRepository.save(consultantUser);
-        mailUtil.sendTempPasswordEmail(email, tempPwd);
-    }
-
-    /**
-     * 현재 인증된 상담사의 기존 비밀번호(oldPwd)를 검증하고, 일치할 경우 새 비밀번호(newPwd)로 업데이트합니다.
-     *
-     * @param dto {@link UpdatePwdRequestDto} 기존 비밀번호와 새 비밀번호를 포함한 DTO
-     * @throws BusinessException        {@link DomainErrorCode#USER_NOT_FOUND} 인증된 사용자를 찾을 수 없을 경우 발생
-     * @throws IllegalArgumentException 기존 비밀번호가 일치하지 않을 경우 발생
-     */
-    public void updatePwd(UpdatePwdRequestDto dto) {
-        String email = authenticationService.getCurrentUserEmail();
-
-        ConsultantUserEntity consultantUser = consultantUserRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(dto.getOldPwd(), consultantUser.getPwd())) {
-            throw new IllegalArgumentException("Old password does not match.");
-        }
-
-        consultantUser.setPwd(passwordEncoder.encode(dto.getNewPwd()));
-        consultantUser.setTempPwd(false);
-
-        consultantUserRepository.save(consultantUser);
-    }
 
     /**
      * 현재 인증된 상담사의 프로필 정보를 조회합니다.

@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @AllArgsConstructor
 @Builder
-public class GetUserInfoResponseDto {
+public class GetUserRoleResponseDto {
 
     @Schema(description = "이름", example = "정찬환")
     private final String name;

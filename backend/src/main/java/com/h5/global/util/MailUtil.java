@@ -3,6 +3,7 @@ package com.h5.global.util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,6 +49,7 @@ public class MailUtil {
         sendEmail(to, TEMP_PWD_SUBJECT, text);
     }
 
+    @Async
     public void sendRegistrationEmail(String to, String initPwd) {
         String text = String.format(REGIST_MESSAGE_TEMPLATE, to, initPwd);
         sendEmail(to, REGIST_SUBJECT, text);

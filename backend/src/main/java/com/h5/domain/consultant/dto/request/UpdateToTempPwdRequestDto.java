@@ -13,4 +13,7 @@ public class UpdateToTempPwdRequestDto {
 
     @Schema(description = "사용자 이메일", example = "user@example.com")
     private String email;
+
+    @Schema(description = "사용자 권한", example = "consultant")
+    private String role;
 }

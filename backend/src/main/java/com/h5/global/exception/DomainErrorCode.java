@@ -18,6 +18,7 @@ public enum DomainErrorCode implements ErrorCode {
     MAIL_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "MAIL-001", "Mail Send Failed"),
 
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-001", "Authentication Failed"),
+    INVALID_ROLE(HttpStatus.BAD_REQUEST, "INVALID-ROLE", "Invalid Role"),
 
     DELETE_REQUEST_DUPLICATED(HttpStatus.CONFLICT, "DELETE-001", "Delete Request Duplicated"),
 
