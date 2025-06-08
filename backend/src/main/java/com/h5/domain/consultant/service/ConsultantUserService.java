@@ -9,6 +9,7 @@ import com.h5.domain.consultant.dto.response.*;
 import com.h5.domain.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.consultant.mapper.ConsultantMapper;
 import com.h5.domain.consultant.repository.ConsultantUserRepository;
+import com.h5.domain.parent.entity.ParentUserEntity;
 import com.h5.domain.parent.service.ParentUserService;
 import com.h5.global.exception.DomainErrorCode;
 import com.h5.global.util.MailUtil;
@@ -43,6 +44,18 @@ public class ConsultantUserService {
     private final ParentUserService parentUserService;
     private final ChildUserService childUserService;
     private final ConsultantMapper consultantMapper;
+
+    /**
+     * 이메일로 상담사 엔티티를 조회하거나, 존재하지 않으면 예외를 던진다.
+     *
+     * @param email 조회할 상담사 이메일
+     * @return 조회된 {@link ParentUserEntity}
+     * @throws BusinessException 사용자가 존재하지 않을 경우 {@link DomainErrorCode#USER_NOT_FOUND}
+     */
+    public ConsultantUserEntity findByEmailOrThrow(String email) {
+        return consultantUserRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+    }
 
     /**
      * 현재 인증된 상담사의 프로필 정보를 조회합니다.

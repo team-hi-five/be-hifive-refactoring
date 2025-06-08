@@ -22,6 +22,8 @@ public enum DomainErrorCode implements ErrorCode {
 
     DELETE_REQUEST_DUPLICATED(HttpStatus.CONFLICT, "DELETE-001", "Delete Request Duplicated"),
 
+    BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-001", "Board Not Found"),
+    BOARD_ACCESS_DENY(HttpStatus.UNAUTHORIZED, "BOARD-001", "Board Access Denied"),
     ;
 
     private final HttpStatus httpStatus;

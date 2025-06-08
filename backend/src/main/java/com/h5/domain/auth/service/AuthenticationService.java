@@ -10,8 +10,10 @@ import com.h5.domain.consultant.dto.request.UpdateToTempPwdRequestDto;
 import com.h5.domain.consultant.dto.response.GetEmailResponse;
 import com.h5.domain.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.consultant.repository.ConsultantUserRepository;
+import com.h5.domain.consultant.service.ConsultantUserService;
 import com.h5.domain.parent.entity.ParentUserEntity;
 import com.h5.domain.parent.repository.ParentUserRepository;
+import com.h5.domain.parent.service.ParentUserService;
 import com.h5.global.exception.DomainErrorCode;
 import com.h5.global.redis.RedisService;
 import com.h5.global.util.JwtUtil;
@@ -33,7 +35,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +50,8 @@ public class AuthenticationService {
     private final PasswordUtil passwordUtil;
     private final PasswordEncoder passwordEncoder;
     private final MailUtil mailUtil;
+    private final ParentUserService parentUserService;
+    private final ConsultantUserService consultantUserService;
 
     /**
      * 사용자 이메일과 비밀번호를 인증하고, Access Token과 Refresh Token을 생성 후 저장한다.
@@ -299,13 +302,24 @@ public class AuthenticationService {
         return authentication.getName();
     }
 
+    public Integer getCurrentUserCenterId() {
+        String role = getCurrentUserRole();
+        String email = getCurrentUserEmail();
+
+        if (role.equals("ROLE_PARENT")) {
+            return parentUserService.findByEmailOrThrow(email).getConsultantUserEntity().getCenter().getId();
+        } else {
+            return consultantUserService.findByEmailOrThrow(email).getCenter().getId();
+        }
+    }
+
     /**
      * 현재 인증된 사용자의 역할(Role) 정보를 반환합니다.
      *
      * @return 인증된 사용자의 역할 문자열
      * @throws BusinessException 인증 정보가 없거나 인증되지 않았거나, 역할이 여러 개일 경우 발생
      */
-    private String getCurrentUserRole() {
+    public String getCurrentUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new BusinessException(DomainErrorCode.AUTHENTICATION_FAILED);
