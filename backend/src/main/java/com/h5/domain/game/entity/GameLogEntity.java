@@ -1,7 +1,7 @@
 package com.h5.domain.game.entity;
 
 import com.h5.domain.asset.entity.GameStageEntity;
-import com.h5.domain.child.entity.ChildUserEntity;
+import com.h5.domain.user.child.entity.ChildUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -33,7 +33,7 @@ public class GameLogEntity {
 
     @NotNull
     @Column(name = "submit_dttm", nullable = false)
-    private LocalDateTime submitDttm;
+    private LocalDateTime submitAt;
 
     @Builder.Default
     @NotNull

@@ -1,6 +1,6 @@
 package com.h5.domain.auth.userdetails;
 
-import com.h5.domain.parent.entity.ParentUserEntity;
+import com.h5.domain.user.parent.entity.ParentUserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

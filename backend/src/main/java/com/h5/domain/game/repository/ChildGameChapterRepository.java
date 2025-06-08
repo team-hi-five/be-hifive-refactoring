@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface ChildGameChapterRepository extends JpaRepository<ChildGameChapterEntity, Integer> {
-    Optional<List<ChildGameChapterEntity>> findByChildUserEntity_IdAndStartDttmBetween(int childUserId, LocalDateTime startDttm, LocalDateTime endDttm);
+    Optional<List<ChildGameChapterEntity>> findByChildUserEntity_IdAndStartAtBetween(int childUserId, LocalDateTime startAt, LocalDateTime endAt);
 }

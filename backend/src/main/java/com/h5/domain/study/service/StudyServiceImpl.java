@@ -2,7 +2,7 @@ package com.h5.domain.study.service;
 
 import com.h5.domain.asset.repository.GameChapterRepository;
 import com.h5.domain.asset.repository.GameStageRepository;
-import com.h5.domain.child.repository.ChildUserRepository;
+import com.h5.domain.user.child.repository.ChildUserRepository;
 import com.h5.domain.study.dto.request.EndStudyChapterRequestDto;
 import com.h5.domain.study.dto.request.SaveStudyLogRequestDto;
 import com.h5.domain.study.dto.request.StartStudyChapterRequsetDto;

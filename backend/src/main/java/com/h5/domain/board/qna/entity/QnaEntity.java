@@ -1,8 +1,7 @@
 package com.h5.domain.board.qna.entity;
 
-import com.h5.domain.parent.entity.ParentUserEntity;
+import com.h5.domain.user.parent.entity.ParentUserEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

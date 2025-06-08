@@ -1,6 +1,6 @@
 package com.h5.domain.statistic.service;
 
-import com.h5.domain.child.repository.ChildUserRepository;
+import com.h5.domain.user.child.repository.ChildUserRepository;
 import com.h5.domain.emotion.entity.EmotionEntity;
 import com.h5.domain.emotion.repository.EmotionRepository;
 import com.h5.domain.game.entity.ChildGameChapterEntity;
@@ -93,12 +93,12 @@ public class StatisticServiceImpl implements StatisticService {
         LocalDateTime startDate = yearMonth.atDay(1).atStartOfDay();
         LocalDateTime endDate = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
-        List<ChildGameChapterEntity> childGameChapterEntityList = childGameChapterRepository.findByChildUserEntity_IdAndStartDttmBetween(childUserId,startDate,endDate)
+        List<ChildGameChapterEntity> childGameChapterEntityList = childGameChapterRepository.findByChildUserEntity_IdAndStartAtBetween(childUserId,startDate,endDate)
                 .orElseThrow(NoSuchElementException::new);
 
         return GetGameVideoDatesResponseDto.builder()
                 .dateList(childGameChapterEntityList.stream()
-                        .map(video -> video.getStartDttm().toLocalDate())
+                        .map(video -> video.getStartAt().toLocalDate())
                         .distinct()
                         .sorted()
                         .collect(Collectors.toList()))
@@ -111,7 +111,7 @@ public class StatisticServiceImpl implements StatisticService {
         LocalDateTime endDate = date.atTime(23, 59, 59);
 
         List<GameLogEntity> gameLogEntityList = gameLogRepository
-                .findAllByChildUserEntity_IdAndGameStageEntity_IdAndSubmitDttmBetween(childUserId, stageId, startDate, endDate)
+                .findAllByChildUserEntity_IdAndGameStageEntity_IdAndSubmitAtBetween(childUserId, stageId, startDate, endDate)
                 .orElseThrow(() -> new NoSuchElementException("No game logs found for given criteria"));
 
         AtomicInteger index = new AtomicInteger(0);

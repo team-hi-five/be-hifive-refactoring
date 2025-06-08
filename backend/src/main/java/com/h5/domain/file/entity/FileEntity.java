@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -36,11 +38,11 @@ public class FileEntity {
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "upload_dttm")
-    private String uploadDttm;
+    @Column(name = "upload_at")
+    private LocalDateTime uploadAt;
 
-    @Column(name = "delete_dttm")
-    private String deleteDttm;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public enum TblType {
         PCD, PCT, NE, NF, QE, QF, FE, FF, G

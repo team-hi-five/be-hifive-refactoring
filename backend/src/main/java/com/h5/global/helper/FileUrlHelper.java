@@ -1,12 +1,9 @@
 package com.h5.global.helper;
 
-import com.h5.domain.file.dto.response.GetFileUrlResponseDto;
 import com.h5.domain.file.entity.FileEntity;
 import com.h5.domain.file.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

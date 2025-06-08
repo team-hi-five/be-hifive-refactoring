@@ -1,8 +1,8 @@
 package com.h5.domain.chatbot.controller;
 
-import com.h5.domain.chatbot.dto.request.InsertChatbotRequestDto;
-import com.h5.domain.chatbot.dto.response.GetChatbotDatesResponseDto;
-import com.h5.domain.chatbot.dto.response.GetChatbotResponseDto;
+import com.h5.domain.chatbot.dto.request.InsertChatbotRequest;
+import com.h5.domain.chatbot.dto.response.GetChatbotDatesResponse;
+import com.h5.domain.chatbot.dto.response.GetChatbotResponse;
 import com.h5.domain.chatbot.service.ChatbotService;
 import com.h5.global.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,14 +37,14 @@ public class ChatbotController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터")
     })
     @PostMapping
-    public ResultResponse<Void> insertChatbot(
+    public ResultResponse<Void> issueChatbot(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "챗봇 대화 저장 요청 DTO",
                     required = true
             )
-            @Valid @RequestBody InsertChatbotRequestDto insertChatbotRequestDto
+            @Valid @RequestBody InsertChatbotRequest insertChatbotRequest
     ) {
-        chatbotService.insertChatbot(insertChatbotRequestDto);
+        chatbotService.issueChatbot(insertChatbotRequest);
         return ResultResponse.success();
     }
 
@@ -57,7 +57,7 @@ public class ChatbotController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
     })
     @GetMapping("/{childUserId}/dates")
-    public ResultResponse<GetChatbotDatesResponseDto> getChatbotDates(
+    public ResultResponse<GetChatbotDatesResponse> getChatbotDates(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
             @PathVariable int childUserId,
             @Parameter(description = "조회할 연도", example = "2025")
@@ -65,7 +65,7 @@ public class ChatbotController {
             @Parameter(description = "조회할 월", example = "6")
             @RequestParam int month
     ) {
-        GetChatbotDatesResponseDto dto = chatbotService.getChatbotDates(childUserId, year, month);
+        GetChatbotDatesResponse dto = chatbotService.getChatbotDates(childUserId, year, month);
         return ResultResponse.success(dto);
     }
 
@@ -78,13 +78,13 @@ public class ChatbotController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
     })
     @GetMapping("/{childUserId}")
-    public ResultResponse<GetChatbotResponseDto> getChatbot(
+    public ResultResponse<GetChatbotResponse> getChatbot(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
             @PathVariable int childUserId,
             @Parameter(description = "조회할 날짜 (ISO 형식, yyyy-MM-dd)", example = "2025-06-15")
             @RequestParam @NotNull LocalDate date
     ) {
-        GetChatbotResponseDto dto = chatbotService.getChatbot(childUserId, date);
+        GetChatbotResponse dto = chatbotService.getChatbot(childUserId, date);
         return ResultResponse.success(dto);
     }
 }

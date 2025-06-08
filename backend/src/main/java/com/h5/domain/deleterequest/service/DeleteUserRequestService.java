@@ -1,14 +1,14 @@
 package com.h5.domain.deleterequest.service;
 
 import com.github.hyeonjaez.springcommon.exception.BusinessException;
-import com.h5.domain.child.service.ChildUserService;
-import com.h5.domain.deleterequest.dto.response.DeleteRequestResponseDto;
-import com.h5.domain.deleterequest.dto.response.GetMyDeleteResponseDto;
+import com.h5.domain.user.child.service.ChildUserService;
+import com.h5.domain.deleterequest.dto.response.DeleteRequestResponse;
+import com.h5.domain.deleterequest.dto.response.GetMyDeleteResponse;
 import com.h5.domain.deleterequest.entity.DeleteUserRequestEntity;
 import com.h5.domain.deleterequest.mapper.DeleteRequestMapper;
 import com.h5.domain.deleterequest.repository.DeleteUserRequestRepository;
-import com.h5.domain.parent.entity.ParentUserEntity;
-import com.h5.domain.parent.service.ParentUserService;
+import com.h5.domain.user.parent.entity.ParentUserEntity;
+import com.h5.domain.user.parent.service.ParentUserService;
 import com.h5.global.exception.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,10 +47,10 @@ public class DeleteUserRequestService {
      * 이미 같은 부모 사용자에 대해 보류(P) 상태의 요청이 존재하면 {@link BusinessException}을 던집니다.
      *
      * @param parentEmail 탈퇴 요청을 생성할 부모 사용자 이메일
-     * @return 생성된 탈퇴 요청 정보를 담은 {@link DeleteRequestResponseDto}
+     * @return 생성된 탈퇴 요청 정보를 담은 {@link DeleteRequestResponse}
      * @throws BusinessException {@code DELETE_REQUEST_DUPLICATED} - 이미 보류 상태 탈퇴 요청이 존재할 경우
      */
-    public DeleteRequestResponseDto deleteRequest(String parentEmail) {
+    public DeleteRequestResponse deleteRequest(String parentEmail) {
         ParentUserEntity parentUserEntity = parentUserService.findByEmailOrThrow(parentEmail);
 
         Optional<DeleteUserRequestEntity> existingRequest =
@@ -67,13 +67,13 @@ public class DeleteUserRequestService {
                         .status(DeleteUserRequestEntity.Status.P)
                         .parentUserId(parentUserEntity.getId())
                         .consultantUserId(parentUserEntity.getConsultantUserId())
-                        .deleteRequestDttm(LocalDateTime.now())
+                        .deleteRequestedAt(LocalDateTime.now())
                         .build());
 
-        return DeleteRequestResponseDto.builder()
+        return DeleteRequestResponse.builder()
                 .deleteRequestId(deleteUserRequest.getId())
                 .status(deleteUserRequest.getStatus())
-                .deleteRequestDttm(deleteUserRequest.getDeleteRequestDttm())
+                .deleteRequestedAt(deleteUserRequest.getDeleteRequestedAt())
                 .build();
     }
 
@@ -96,7 +96,7 @@ public class DeleteUserRequestService {
         parentUserService.markDeleted(deleteUserRequestEntity.getParentUserId(), deleteDttm);
         childUserService.markDeleted(deleteUserRequestEntity.getParentUserId(), deleteDttm);
 
-        deleteUserRequestEntity.setDeleteConfirmDttm(deleteDttm);
+        deleteUserRequestEntity.setDeleteConfirmedAt(deleteDttm);
         deleteUserRequestEntity.setStatus(DeleteUserRequestEntity.Status.A);
 
         deleteUserRequestRepository.save(deleteUserRequestEntity);
@@ -115,7 +115,7 @@ public class DeleteUserRequestService {
         DeleteUserRequestEntity deleteUserRequestEntity = deleteUserRequestRepository.findById(deleteUserRequestId)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
 
-        deleteUserRequestEntity.setDeleteConfirmDttm(LocalDateTime.now());
+        deleteUserRequestEntity.setDeleteConfirmedAt(LocalDateTime.now());
         deleteUserRequestEntity.setStatus(DeleteUserRequestEntity.Status.R);
 
         deleteUserRequestRepository.save(deleteUserRequestEntity);
@@ -125,13 +125,13 @@ public class DeleteUserRequestService {
      * 특정 상담사 이메일에 연관된 보류(P) 상태의 탈퇴 요청 목록을 조회하여 DTO 리스트로 반환합니다.
      * <p>
      * 조회된 엔티티들은 {@link DeleteRequestMapper}를 통해
-     * {@link GetMyDeleteResponseDto}로 매핑됩니다.
+     * {@link GetMyDeleteResponse}로 매핑됩니다.
      *
      * @param consultantEmail 조회할 상담사 이메일
-     * @return {@link GetMyDeleteResponseDto} 리스트
+     * @return {@link GetMyDeleteResponse} 리스트
      */
     @Transactional(readOnly = true)
-    public List<GetMyDeleteResponseDto> getMyDelete(String consultantEmail) {
+    public List<GetMyDeleteResponse> getMyDelete(String consultantEmail) {
         List<DeleteUserRequestEntity> entities =
                 deleteUserRequestRepository.findALlByStatusAndConsultantUser_Email(
                         DeleteUserRequestEntity.Status.P,

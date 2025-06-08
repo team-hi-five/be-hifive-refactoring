@@ -1,7 +1,7 @@
 package com.h5.domain.auth.service;
 
 import com.h5.domain.auth.userdetails.ConsultantCustomUserDetails;
-import com.h5.domain.consultant.repository.ConsultantUserRepository;
+import com.h5.domain.user.consultant.repository.ConsultantUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

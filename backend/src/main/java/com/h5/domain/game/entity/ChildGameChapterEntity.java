@@ -1,7 +1,7 @@
 package com.h5.domain.game.entity;
 
 import com.h5.domain.asset.entity.GameChapterEntity;
-import com.h5.domain.child.entity.ChildUserEntity;
+import com.h5.domain.user.child.entity.ChildUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -38,11 +38,11 @@ public class ChildGameChapterEntity {
 
     @NotNull
     @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "start_dttm", nullable = false)
-    private LocalDateTime startDttm;
+    @Column(name = "start_at", nullable = false)
+    private LocalDateTime startAt;
 
-    @Column(name = "end_dttm")
-    private LocalDateTime endDttm;
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
 
     @OneToMany(mappedBy = "childGameChapterEntity")
     private Set<ChildGameStageEntity> childGameStageEntities = new LinkedHashSet<>();

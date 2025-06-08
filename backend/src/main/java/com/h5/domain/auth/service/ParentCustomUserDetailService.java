@@ -1,7 +1,7 @@
 package com.h5.domain.auth.service;
 
 import com.h5.domain.auth.userdetails.ParentCustomUserDetails;
-import com.h5.domain.parent.repository.ParentUserRepository;
+import com.h5.domain.user.parent.repository.ParentUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

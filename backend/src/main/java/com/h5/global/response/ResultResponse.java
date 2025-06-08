@@ -17,7 +17,6 @@ public class ResultResponse<T> {
     private String message;
     private T results;
 
-
     public static <T> ResultResponse<T> created(T results) {
         return ResultResponse.<T>builder()
                 .status(HttpStatus.CREATED.value())
@@ -60,4 +59,5 @@ public class ResultResponse<T> {
                 .results(results)
                 .build();
     }
+
 }

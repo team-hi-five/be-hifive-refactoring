@@ -1,7 +1,7 @@
 package com.h5.domain.study.entity;
 
 import com.h5.domain.asset.entity.GameChapterEntity;
-import com.h5.domain.child.entity.ChildUserEntity;
+import com.h5.domain.user.child.entity.ChildUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

@@ -1,9 +1,8 @@
 package com.h5.domain.board.faq.entity;
 
-import com.h5.domain.consultant.entity.ConsultantUserEntity;
+import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

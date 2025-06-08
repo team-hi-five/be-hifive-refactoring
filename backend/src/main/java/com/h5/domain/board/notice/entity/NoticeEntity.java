@@ -1,6 +1,6 @@
 package com.h5.domain.board.notice.entity;
 
-import com.h5.domain.consultant.entity.ConsultantUserEntity;
+import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

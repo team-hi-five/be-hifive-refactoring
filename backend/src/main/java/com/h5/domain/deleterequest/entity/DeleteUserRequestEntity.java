@@ -1,12 +1,11 @@
 package com.h5.domain.deleterequest.entity;
 
-import com.h5.domain.consultant.entity.ConsultantUserEntity;
-import com.h5.domain.parent.entity.ParentUserEntity;
+import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
+import com.h5.domain.user.parent.entity.ParentUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,11 +21,11 @@ public class DeleteUserRequestEntity {
     private Integer id;
 
     @NotNull
-    @Column(name = "delete_request_dttm")
-    private LocalDateTime deleteRequestDttm;
+    @Column(name = "delete_requested_at")
+    private LocalDateTime deleteRequestedAt;
 
-    @Column(name = "delete_confirm_dttm")
-    private LocalDateTime deleteConfirmDttm;
+    @Column(name = "delete_confirmed_at")
+    private LocalDateTime deleteConfirmedAt;
 
     public enum Status {
         P, A, R
@@ -54,10 +53,10 @@ public class DeleteUserRequestEntity {
     private ConsultantUserEntity consultantUser;
 
     @Builder
-    public DeleteUserRequestEntity(Integer id, LocalDateTime deleteRequestDttm, LocalDateTime deleteConfirmDttm, Status status, Integer parentUserId, Integer consultantUserId) {
+    public DeleteUserRequestEntity(Integer id, LocalDateTime deleteRequestedAt, LocalDateTime deleteConfirmedAt, Status status, Integer parentUserId, Integer consultantUserId) {
         this.id = id;
-        this.deleteRequestDttm = deleteRequestDttm;
-        this.deleteConfirmDttm = deleteConfirmDttm;
+        this.deleteRequestedAt = deleteRequestedAt;
+        this.deleteConfirmedAt = deleteConfirmedAt;
         this.status = status;
         this.parentUserId = parentUserId;
         this.consultantUserId = consultantUserId;

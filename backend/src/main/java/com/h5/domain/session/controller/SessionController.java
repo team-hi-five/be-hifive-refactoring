@@ -1,13 +1,9 @@
 package com.h5.domain.session.controller;
 
 import com.h5.domain.session.dto.request.CloseSessionRequestDto;
-import com.h5.domain.session.dto.request.ControlRequest;
 import com.h5.domain.session.dto.request.JoinSessionRequestDto;
-import com.h5.domain.session.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,17 +26,5 @@ public class SessionController {
         sessionService.endMeeting(closeSessionRequestDto);
         return ResponseEntity.ok("Meeting ended successfully");
     }
-
-    @MessageMapping("/control")
-    @SendTo("/topic")
-    public ControlRequest handleWebSocketMessage(ControlRequest controlRequest) {
-        if (controlRequest == null || controlRequest.getAction() == null) {
-            throw new IllegalArgumentException("Invalid control request");
-        }
-        sessionService.processControlMessage(controlRequest);
-
-        return controlRequest;
-    }
-
 
 }

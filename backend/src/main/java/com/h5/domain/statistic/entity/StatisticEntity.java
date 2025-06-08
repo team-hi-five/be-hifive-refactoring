@@ -1,6 +1,6 @@
 package com.h5.domain.statistic.entity;
 
-import com.h5.domain.child.entity.ChildUserEntity;
+import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.emotion.entity.EmotionEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

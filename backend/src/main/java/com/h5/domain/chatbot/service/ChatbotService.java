@@ -2,14 +2,13 @@ package com.h5.domain.chatbot.service;
 
 import com.github.hyeonjaez.springcommon.exception.BusinessException;
 import com.h5.domain.chatbot.document.ChatBotDocument;
-import com.h5.domain.chatbot.dto.request.InsertChatbotRequestDto;
-import com.h5.domain.chatbot.dto.response.ChatbotMessageResponseDto;
-import com.h5.domain.chatbot.dto.response.GetChatbotDatesResponseDto;
-import com.h5.domain.chatbot.dto.response.GetChatbotResponseDto;
+import com.h5.domain.chatbot.dto.request.InsertChatbotRequest;
+import com.h5.domain.chatbot.dto.response.ChatbotMessageResponse;
+import com.h5.domain.chatbot.dto.response.GetChatbotDatesResponse;
+import com.h5.domain.chatbot.dto.response.GetChatbotResponse;
 import com.h5.domain.chatbot.repository.ChatbotRepository;
 import com.h5.global.exception.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
  * - getChatbot: 특정 자녀(childUserId)와 날짜(date)에 해당하는 챗봇 대화 내역을 조회합니다.
  * </p>
  */
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatbotService {
@@ -42,29 +40,29 @@ public class ChatbotService {
      *    현재 시각을 chatBotUseDttm으로 설정한 뒤, 일괄 저장(saveAll)합니다.
      * </p>
      *
-     * @param insertChatbotRequestDto 챗봇 대화 저장 요청 정보를 담은 DTO
+     * @param insertChatbotRequest 챗봇 대화 저장 요청 정보를 담은 DTO
      * @throws BusinessException 이미 오늘 저장된 챗봇 대화가 존재하는 경우 발생
      */
     @Transactional
-    public void insertChatbot(InsertChatbotRequestDto insertChatbotRequestDto) {
-        int childUserId = insertChatbotRequestDto.getChatbotMessageDtoList().get(0).getChildUserId();
+    public void issueChatbot(InsertChatbotRequest insertChatbotRequest) {
+        int childUserId = insertChatbotRequest.getChatbotMessageList().get(0).getChildUserId();
 
         LocalDateTime now = LocalDateTime.now();
         LocalDate today = now.toLocalDate();
         LocalDateTime startOfDay = today.atStartOfDay();
         LocalDateTime endOfDay = today.atTime(23, 59, 59);
 
-        boolean alreadySaved = chatbotRepository.existsByChildUserIdAndChatBotUseDttmBetween(
+        boolean alreadySaved = chatbotRepository.existsByChildUserIdAndChatBotUsedAtBetween(
                 childUserId, startOfDay, endOfDay
         );
         if (alreadySaved) {
             throw new BusinessException(DomainErrorCode.CHATBOT_ALREADY_SAVED);
         }
 
-        List<ChatBotDocument> documents = insertChatbotRequestDto.getChatbotMessageDtoList().stream()
+        List<ChatBotDocument> documents = insertChatbotRequest.getChatbotMessageList().stream()
                 .map(msg -> ChatBotDocument.builder()
                         .childUserId(childUserId)
-                        .chatBotUseDttm(now)
+                        .chatBotUsedAt(now)
                         .sender(msg.getSender())
                         .messageIndex(msg.getMessageIndex())
                         .message(msg.getMessage())
@@ -91,22 +89,22 @@ public class ChatbotService {
      * @throws BusinessException 해당 기간에 저장된 챗봇 대화가 없을 경우 발생
      */
     @Transactional(readOnly = true)
-    public GetChatbotDatesResponseDto getChatbotDates(int childUserId, int year, int month) {
+    public GetChatbotDatesResponse getChatbotDates(int childUserId, int year, int month) {
         YearMonth ym = YearMonth.of(year, month);
         LocalDateTime startDate = ym.atDay(1).atStartOfDay();
         LocalDateTime endDate = ym.atEndOfMonth().atTime(23, 59, 59);
 
         List<ChatBotDocument> docs = chatbotRepository
-                .findByChildUserIdAndChatBotUseDttmBetween(childUserId, startDate, endDate)
+                .findByChildUserIdAndChatBotUsedAtBetween(childUserId, startDate, endDate)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.CHATBOT_NOT_FOUND));
 
         List<LocalDate> dates = docs.stream()
-                .map(doc -> doc.getChatBotUseDttm().toLocalDate())
+                .map(doc -> doc.getChatBotUsedAt().toLocalDate())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
 
-        return GetChatbotDatesResponseDto.builder()
+        return GetChatbotDatesResponse.builder()
                 .dateList(dates)
                 .build();
     }
@@ -126,17 +124,17 @@ public class ChatbotService {
      * @throws BusinessException 해당 날짜에 저장된 챗봇 대화가 없을 경우 발생
      */
     @Transactional(readOnly = true)
-    public GetChatbotResponseDto getChatbot(int childUserId, LocalDate date) {
+    public GetChatbotResponse getChatbot(int childUserId, LocalDate date) {
         LocalDateTime startDate = date.atStartOfDay();
         LocalDateTime endDate = date.atTime(23, 59, 59);
 
-        List<ChatbotMessageResponseDto> chatbotMessageList = chatbotRepository
-                .findProjectedByChildUserIdAndChatBotUseDttmBetween(
+        List<ChatbotMessageResponse> chatbotMessageList = chatbotRepository
+                .findProjectedByChildUserIdAndChatBotUsedAtBetween(
                         childUserId, startDate, endDate
                 )
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.CHATBOT_NOT_FOUND));
 
-        return GetChatbotResponseDto.builder()
+        return GetChatbotResponse.builder()
                 .chatBotMessageList(chatbotMessageList)
                 .build();
     }
