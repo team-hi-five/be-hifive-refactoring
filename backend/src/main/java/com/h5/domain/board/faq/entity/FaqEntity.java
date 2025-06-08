@@ -36,7 +36,8 @@ public class FaqEntity {
     private ConsultantUserEntity consultantUser;
 
     @Lob
-    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 6)
     private Type type;
 
     public enum Type{

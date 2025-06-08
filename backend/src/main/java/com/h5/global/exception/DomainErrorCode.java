@@ -24,6 +24,9 @@ public enum DomainErrorCode implements ErrorCode {
 
     BOARD_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-001", "Board Not Found"),
     BOARD_ACCESS_DENY(HttpStatus.UNAUTHORIZED, "BOARD-001", "Board Access Denied"),
+
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT-001", "Comment Not Found"),
+    COMMENT_ACCESS_DENY(HttpStatus.UNAUTHORIZED, "COMMENT-001", "Comment Access Denied"),
     ;
 
     private final HttpStatus httpStatus;

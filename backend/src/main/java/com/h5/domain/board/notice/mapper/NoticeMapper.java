@@ -1,7 +1,7 @@
 package com.h5.domain.board.notice.mapper;
 
-import com.h5.domain.board.notice.dto.response.NoticeDetailResponseDto;
-import com.h5.domain.board.notice.dto.response.NoticeListResponseDto;
+import com.h5.domain.board.notice.dto.response.NoticeDetailResponse;
+import com.h5.domain.board.notice.dto.response.NoticeListResponse;
 import com.h5.domain.board.notice.entity.NoticeEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoticeMapper {
 
-    public NoticeListResponseDto toListResponse(Page<NoticeEntity> noticePage) {
-        List<NoticeDetailResponseDto> noticeResponses = noticePage.getContent().stream()
-                .map(noticeEntity -> NoticeDetailResponseDto.builder()
+    public NoticeListResponse toListResponse(Page<NoticeEntity> noticePage) {
+        List<NoticeDetailResponse> noticeResponses = noticePage.getContent().stream()
+                .map(noticeEntity -> NoticeDetailResponse.builder()
                         .id(noticeEntity.getId())
                         .title(noticeEntity.getTitle())
                         .content(noticeEntity.getContent())
@@ -27,7 +27,7 @@ public class NoticeMapper {
                 )
                 .collect(Collectors.toList());
 
-        return NoticeListResponseDto.builder()
+        return NoticeListResponse.builder()
                 .currentPage(noticePage.getNumber())
                 .pageSize(noticePage.getSize())
                 .totalElements(noticePage.getTotalElements())
@@ -36,8 +36,8 @@ public class NoticeMapper {
                 .build();
     }
 
-    public NoticeDetailResponseDto toDetailResponse(NoticeEntity noticeEntity) {
-        return NoticeDetailResponseDto.builder()
+    public NoticeDetailResponse toDetailResponse(NoticeEntity noticeEntity) {
+        return NoticeDetailResponse.builder()
                 .id(noticeEntity.getId())
                 .title(noticeEntity.getTitle())
                 .content(noticeEntity.getContent())

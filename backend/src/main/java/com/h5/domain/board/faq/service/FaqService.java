@@ -3,11 +3,11 @@ package com.h5.domain.board.faq.service;
 import com.github.hyeonjaez.springcommon.exception.BusinessException;
 import com.h5.domain.auth.service.AuthenticationService;
 import com.h5.domain.board.common.service.AbstractBoardService;
-import com.h5.domain.board.faq.dto.request.FaqIssueRequestDto;
-import com.h5.domain.board.faq.dto.request.FaqUpdateRequestDto;
-import com.h5.domain.board.faq.dto.response.FaqDetailResponseDto;
-import com.h5.domain.board.faq.dto.response.FaqListResponseDto;
-import com.h5.domain.board.faq.dto.response.FaqSaveResponseDto;
+import com.h5.domain.board.faq.dto.request.FaqIssueRequest;
+import com.h5.domain.board.faq.dto.request.FaqUpdateRequest;
+import com.h5.domain.board.faq.dto.response.FaqDetailResponse;
+import com.h5.domain.board.faq.dto.response.FaqListResponse;
+import com.h5.domain.board.faq.dto.response.FaqSaveResponse;
 import com.h5.domain.board.faq.entity.FaqEntity;
 import com.h5.domain.board.faq.mapper.FaqMapper;
 import com.h5.domain.board.faq.repository.FaqRepository;
@@ -26,11 +26,11 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Transactional
 public class FaqService extends AbstractBoardService<
-        FaqListResponseDto,
-        FaqDetailResponseDto,
-        FaqIssueRequestDto,
-        FaqUpdateRequestDto,
-        FaqSaveResponseDto> {
+        FaqListResponse,
+        FaqDetailResponse,
+        FaqIssueRequest,
+        FaqUpdateRequest,
+        FaqSaveResponse> {
 
     private final FaqRepository faqRepository;
     private final FaqMapper faqMapper;
@@ -48,7 +48,7 @@ public class FaqService extends AbstractBoardService<
      */
     @Override
     @Transactional(readOnly = true)
-    public FaqListResponseDto findAll(String title, String writer, Integer page, Integer size) {
+    public FaqListResponse findAll(String title, String writer, Integer page, Integer size) {
         Integer centerId = authenticationService.getCurrentUserCenterId();
 
         Pageable pageable = PageRequest.of(
@@ -87,7 +87,7 @@ public class FaqService extends AbstractBoardService<
      */
     @Override
     @Transactional(readOnly = true)
-    public FaqDetailResponseDto findById(Integer id) {
+    public FaqDetailResponse findById(Integer id) {
         Integer centerId = authenticationService.getCurrentUserCenterId();
 
         FaqEntity entity = faqRepository
@@ -108,7 +108,7 @@ public class FaqService extends AbstractBoardService<
      * @return 저장된 FAQ ID DTO
      */
     @Override
-    public FaqSaveResponseDto issue(FaqIssueRequestDto dto) {
+    public FaqSaveResponse issue(FaqIssueRequest dto) {
         String email = authenticationService.getCurrentUserEmail();
         ConsultantUserEntity consultant = consultantUserService.findByEmailOrThrow(email);
 
@@ -120,7 +120,7 @@ public class FaqService extends AbstractBoardService<
                 .build();
 
         Integer savedId = faqRepository.save(entity).getId();
-        return FaqSaveResponseDto.builder().id(savedId).build();
+        return FaqSaveResponse.builder().id(savedId).build();
     }
 
     /**
@@ -131,7 +131,7 @@ public class FaqService extends AbstractBoardService<
      * @throws BusinessException 존재하지 않거나 소유자 불일치 시
      */
     @Override
-    public FaqSaveResponseDto update(FaqUpdateRequestDto dto) {
+    public FaqSaveResponse update(FaqUpdateRequest dto) {
         FaqEntity entity = faqRepository
                 .findByIdAndDeletedAtIsNull(dto.getId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.BOARD_NOT_FOUND));
@@ -145,7 +145,7 @@ public class FaqService extends AbstractBoardService<
         entity.setContent(dto.getContent());
         Integer updatedId = faqRepository.save(entity).getId();
 
-        return FaqSaveResponseDto.builder().id(updatedId).build();
+        return FaqSaveResponse.builder().id(updatedId).build();
     }
 
     /**

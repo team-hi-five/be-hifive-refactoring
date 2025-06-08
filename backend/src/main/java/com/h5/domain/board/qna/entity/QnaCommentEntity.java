@@ -4,7 +4,8 @@ import com.h5.domain.consultant.entity.ConsultantUserEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -13,54 +14,42 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "qna_answer")
+@Table(name = "qna_comment")
 @Builder
-public class QnaAnswerEntity {
-
+public class QnaCommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "qna_ans_id", nullable = false)
+    @Column(name = "qna_comment_id", nullable = false)
     private Integer id;
 
-    @NotNull
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_dttm", nullable = false)
-    private LocalDateTime createDttm;
+    @CreatedDate
+    @Column(name = "issued_at", nullable = false, updatable = false)
+    private LocalDateTime issuedAt;
 
-    @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "update_dttm", nullable = false)
-    private LocalDateTime updateDttm;
+    @LastModifiedDate
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-    @Column(name = "delete_dttm")
-    private LocalDateTime deleteDttm;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_id", nullable = false)
     private QnaEntity qnaEntity;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "consultant_user_id", nullable = false)
     private ConsultantUserEntity consultantUser;
 
-    @PrePersist
-    protected void onCreate() {
-        this.createDttm = LocalDateTime.now();
-        this.updateDttm = LocalDateTime.now();
-
+    @Builder
+    public QnaCommentEntity(String content, QnaEntity qnaEntity, ConsultantUserEntity consultantUser) {
+        this.content = content;
+        this.qnaEntity = qnaEntity;
+        this.consultantUser = consultantUser;
     }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updateDttm = LocalDateTime.now();
-    }
-
 }

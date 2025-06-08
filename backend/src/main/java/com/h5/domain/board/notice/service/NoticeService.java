@@ -3,11 +3,11 @@ package com.h5.domain.board.notice.service;
 import com.github.hyeonjaez.springcommon.exception.BusinessException;
 import com.h5.domain.auth.service.AuthenticationService;
 import com.h5.domain.board.common.service.AbstractBoardService;
-import com.h5.domain.board.notice.dto.request.NoticeIssueRequestDto;
-import com.h5.domain.board.notice.dto.request.NoticeUpdateRequestDto;
-import com.h5.domain.board.notice.dto.response.NoticeDetailResponseDto;
-import com.h5.domain.board.notice.dto.response.NoticeListResponseDto;
-import com.h5.domain.board.notice.dto.response.NoticeSaveResponseDto;
+import com.h5.domain.board.notice.dto.request.NoticeIssueRequest;
+import com.h5.domain.board.notice.dto.request.NoticeUpdateRequest;
+import com.h5.domain.board.notice.dto.response.NoticeDetailResponse;
+import com.h5.domain.board.notice.dto.response.NoticeListResponse;
+import com.h5.domain.board.notice.dto.response.NoticeSaveResponse;
 import com.h5.domain.board.notice.entity.NoticeEntity;
 import com.h5.domain.board.notice.mapper.NoticeMapper;
 import com.h5.domain.board.notice.repository.NoticeRepository;
@@ -25,11 +25,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Transactional
 public class NoticeService extends AbstractBoardService<
-        NoticeListResponseDto,
-        NoticeDetailResponseDto,
-        NoticeIssueRequestDto,
-        NoticeUpdateRequestDto,
-        NoticeSaveResponseDto> {
+        NoticeListResponse,
+        NoticeDetailResponse,
+        NoticeIssueRequest,
+        NoticeUpdateRequest,
+        NoticeSaveResponse> {
 
     private final NoticeRepository noticeRepository;
     private final NoticeMapper noticeMapper;
@@ -46,11 +46,11 @@ public class NoticeService extends AbstractBoardService<
      * @param writer 작성자 필터 (null 또는 빈 문자열이면 전체)
      * @param page   페이지 번호 (0부터 시작, null이면 0)
      * @param size   페이지 크기 (null이거나 0 이하이면 10)
-     * @return 페이징된 공지사항 리스트를 담은 {@link NoticeListResponseDto}
+     * @return 페이징된 공지사항 리스트를 담은 {@link NoticeListResponse}
      */
     @Override
     @Transactional(readOnly = true)
-    public NoticeListResponseDto findAll(String title, String writer, Integer page, Integer size) {
+    public NoticeListResponse findAll(String title, String writer, Integer page, Integer size) {
         Integer centerId = authenticationService.getCurrentUserCenterId();
 
         Pageable pageable = PageRequest.of(
@@ -61,11 +61,11 @@ public class NoticeService extends AbstractBoardService<
 
         Page<NoticeEntity> noticePage;
         if (title != null && !title.isEmpty()) {
-            noticePage = noticeRepository.findByConsultantUser_Center_IdAndTitleContainingAndDeletedAtIsNull(
+            noticePage = noticeRepository.findAllByConsultantUser_Center_IdAndTitleContainingAndDeletedAtIsNull(
                     centerId, title, pageable
             );
         } else if (writer != null && !writer.isEmpty()) {
-            noticePage = noticeRepository.findByConsultantUser_Center_IdAndConsultantUser_NameContainingAndDeletedAtIsNull(
+            noticePage = noticeRepository.findAllByConsultantUser_Center_IdAndConsultantUser_NameContainingAndDeletedAtIsNull(
                     centerId, writer, pageable
             );
         } else {
@@ -81,11 +81,11 @@ public class NoticeService extends AbstractBoardService<
      * 특정 공지사항의 상세 정보를 조회하고, 조회 수를 1 증가시킵니다.
      *
      * @param id 조회할 공지사항 ID
-     * @return 공지사항 상세 정보를 담은 {@link NoticeDetailResponseDto}
+     * @return 공지사항 상세 정보를 담은 {@link NoticeDetailResponse}
      * @throws BusinessException 게시글이 존재하지 않거나 접근 권한이 없을 경우
      */
     @Override
-    public NoticeDetailResponseDto findById(Integer id) {
+    public NoticeDetailResponse findById(Integer id) {
         Integer centerId = authenticationService.getCurrentUserCenterId();
 
         NoticeEntity noticeEntity = noticeRepository.findByIdAndDeletedAtIsNull(id)
@@ -102,11 +102,11 @@ public class NoticeService extends AbstractBoardService<
     /**
      * 새로운 공지사항을 등록합니다.
      *
-     * @param dto 공지사항 등록 요청 정보를 담은 {@link NoticeIssueRequestDto}
-     * @return 등록된 공지사항 ID를 담은 {@link NoticeSaveResponseDto}
+     * @param dto 공지사항 등록 요청 정보를 담은 {@link NoticeIssueRequest}
+     * @return 등록된 공지사항 ID를 담은 {@link NoticeSaveResponse}
      */
     @Override
-    public NoticeSaveResponseDto issue(NoticeIssueRequestDto dto) {
+    public NoticeSaveResponse issue(NoticeIssueRequest dto) {
         String email = authenticationService.getCurrentUserEmail();
         ConsultantUserEntity consultantUserEntity = consultantUserService.findByEmailOrThrow(email);
 
@@ -117,18 +117,18 @@ public class NoticeService extends AbstractBoardService<
                 .build();
 
         Integer savedId = noticeRepository.save(noticeEntity).getId();
-        return NoticeSaveResponseDto.builder().noticeId(savedId).build();
+        return NoticeSaveResponse.builder().noticeId(savedId).build();
     }
 
     /**
      * 기존 공지사항을 수정합니다.
      *
-     * @param dto 수정할 공지사항 정보(ID, 제목, 내용)를 담은 {@link NoticeUpdateRequestDto}
-     * @return 수정된 공지사항 ID를 담은 {@link NoticeSaveResponseDto}
+     * @param dto 수정할 공지사항 정보(ID, 제목, 내용)를 담은 {@link NoticeUpdateRequest}
+     * @return 수정된 공지사항 ID를 담은 {@link NoticeSaveResponse}
      * @throws BusinessException 게시글이 없거나 소유자가 아닌 경우
      */
     @Override
-    public NoticeSaveResponseDto update(NoticeUpdateRequestDto dto) {
+    public NoticeSaveResponse update(NoticeUpdateRequest dto) {
         NoticeEntity noticeEntity = noticeRepository.findByIdAndDeletedAtIsNull(dto.getId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.BOARD_NOT_FOUND));
 
@@ -141,7 +141,7 @@ public class NoticeService extends AbstractBoardService<
         noticeEntity.setContent(dto.getContent());
         Integer savedId = noticeRepository.save(noticeEntity).getId();
 
-        return NoticeSaveResponseDto.builder().noticeId(savedId).build();
+        return NoticeSaveResponse.builder().noticeId(savedId).build();
     }
 
     /**

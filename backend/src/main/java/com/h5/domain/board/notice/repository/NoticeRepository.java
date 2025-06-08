@@ -18,11 +18,11 @@ import java.util.Optional;
 @Repository
 public interface NoticeRepository extends JpaRepository<NoticeEntity, Integer> {
 
-    Page<NoticeEntity> findByConsultantUser_Center_IdAndTitleContainingAndDeletedAtIsNull(Integer centerId, String title, Pageable pageable);
+    Optional<NoticeEntity> findByIdAndDeletedAtIsNull(Integer id);
 
-    Page<NoticeEntity> findByConsultantUser_Center_IdAndConsultantUser_NameContainingAndDeletedAtIsNull(Integer centerId, String writer, Pageable pageable);
+    Page<NoticeEntity> findAllByConsultantUser_Center_IdAndTitleContainingAndDeletedAtIsNull(Integer centerId, String title, Pageable pageable);
+
+    Page<NoticeEntity> findAllByConsultantUser_Center_IdAndConsultantUser_NameContainingAndDeletedAtIsNull(Integer centerId, String writer, Pageable pageable);
 
     Page<NoticeEntity> findAllByConsultantUser_Center_IdAndDeletedAtIsNull(Integer centerId, Pageable pageable);
-
-    Optional<NoticeEntity> findByIdAndDeletedAtIsNull(Integer id);
 }

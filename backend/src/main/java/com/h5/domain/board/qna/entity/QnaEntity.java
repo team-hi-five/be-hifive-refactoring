@@ -18,37 +18,42 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "qna")
 public class QnaEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "qna_id", nullable = false)
     private Integer id;
 
     @Size(max = 200)
-    @NotNull
     @Column(name = "title", nullable = false, length = 200)
     private String title;
 
-    @NotNull
     @Lob
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "comment_count", nullable = false)
+    private Integer commentCount = 0;
+
     @CreatedDate
-    @NotNull
-    @Column(name = "create_dttm", nullable = false, updatable = false)
-    private LocalDateTime createDttm;
+    @Column(name = "issued_at", nullable = false, updatable = false)
+    private LocalDateTime issuedAt;
 
     @LastModifiedDate
-    @NotNull
-    @Column(name = "update_dttm", nullable = false)
-    private LocalDateTime updateDttm;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 
-    @Column(name = "delete_dttm")
-    private LocalDateTime deleteDttm;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent_user_id", nullable = false)
     private ParentUserEntity parentUser;
 
+    @Builder
+    public QnaEntity(String title, String content, ParentUserEntity parentUser) {
+        this.title = title;
+        this.content = content;
+        this.parentUser = parentUser;
+    }
 }
