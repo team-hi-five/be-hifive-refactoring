@@ -4,18 +4,18 @@ import com.github.hyeonjaez.springcommon.exception.BusinessException;
 import com.h5.domain.auth.service.AuthenticationService;
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.user.child.repository.ChildUserRepository;
-import com.h5.domain.user.consultant.dto.request.RegisterParentAccountDto;
+import com.h5.domain.user.consultant.dto.request.RegisterParentAccount;
 import com.h5.domain.user.consultant.dto.response.EmailCheckResponse;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.user.parent.mapper.ParentMapper;
 import com.h5.global.exception.DomainErrorCode;
 import com.h5.global.util.MailUtil;
 import com.h5.global.util.PasswordUtil;
-import com.h5.domain.user.parent.dto.info.ConsultantInfo;
-import com.h5.domain.user.parent.dto.info.MyChildInfo;
-import com.h5.domain.user.parent.dto.info.MyInfo;
-import com.h5.domain.user.parent.dto.response.MyChildrenResponseDto;
-import com.h5.domain.user.parent.dto.response.MyPageResponseDto;
+import com.h5.domain.user.parent.dto.response.info.ConsultantInfo;
+import com.h5.domain.user.parent.dto.response.info.MyChildInfo;
+import com.h5.domain.user.parent.dto.response.info.MyInfo;
+import com.h5.domain.user.parent.dto.response.MyChildrenResponse;
+import com.h5.domain.user.parent.dto.response.MyPageResponse;
 import com.h5.domain.user.parent.entity.ParentUserEntity;
 import com.h5.domain.user.parent.repository.ParentUserRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class ParentUserService {
      * @throws BusinessException 이메일 전송 실패 시 {@link DomainErrorCode#MAIL_SEND_FAILED}
      */
     @Transactional
-    public Integer issueOrGetParent(RegisterParentAccountDto dto, Integer consultantId) {
+    public Integer issueOrGetParent(RegisterParentAccount dto, Integer consultantId) {
         Optional<ParentUserEntity> optionalParentUser = parentUserRepository.findByEmail(dto.getParentEmail());
         ParentUserEntity parentUser;
         String initPwd = null;
@@ -87,17 +87,17 @@ public class ParentUserService {
      * @return 등록된 자녀 정보 목록 (자녀 ID, 자녀 이름)
      * @throws BusinessException 사용자가 존재하지 않거나 조회된 자녀가 없을 경우 {@link DomainErrorCode#USER_NOT_FOUND}
      */
-    public List<MyChildrenResponseDto> getMyChildren() {
+    public List<MyChildrenResponse> getMyChildren() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String parentEmail = authentication.getName();
 
         ParentUserEntity parentUserEntity = findByEmailOrThrow(parentEmail);
         List<ChildUserEntity> myChildren = childUserRepository
-                .findAllByParentUserEntity_IdAndDeleteDttmIsNull(parentUserEntity.getId())
+                .findAllByParentUserEntity_IdAndDeletedAtIsNull(parentUserEntity.getId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
 
         return myChildren.stream()
-                .map(child -> MyChildrenResponseDto.builder()
+                .map(child -> MyChildrenResponse.builder()
                         .childUserId(child.getId())
                         .childUserName(child.getName())
                         .build())
@@ -140,17 +140,17 @@ public class ParentUserService {
         ParentUserEntity parentUserEntity = parentUserRepository.findById(parentUserId)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
 
-        parentUserEntity.setDeleteDttm(deleteDttm);
+        parentUserEntity.setDeletedAt(deleteDttm);
         parentUserRepository.save(parentUserEntity);
     }
 
     /**
      * 현재 인증된 부모 사용자의 마이페이지 정보(개인 정보, 자녀 목록, 상담사 정보)를 조회한다.
      *
-     * @return 마이페이지에 표시할 {@link MyPageResponseDto}
+     * @return 마이페이지에 표시할 {@link MyPageResponse}
      */
     @Transactional(readOnly = true)
-    public MyPageResponseDto getMyPageInfo() {
+    public MyPageResponse getMyPageInfo() {
         String parentEmail = authenticationService.getCurrentUserEmail();
 
         ParentUserEntity parentUserEntity = findByEmailOrThrow(parentEmail);
@@ -161,7 +161,7 @@ public class ParentUserService {
         List<MyChildInfo> myChildInfos = parentMapper.buildMyChildInfos(childUserEntities);
         ConsultantInfo consultantInfo = parentMapper.buildConsultantInfo(consultantUserEntity);
 
-        return MyPageResponseDto.builder()
+        return MyPageResponse.builder()
                 .myChildren(myChildInfos)
                 .myInfo(myInfo)
                 .consultantInfo(consultantInfo)

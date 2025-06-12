@@ -2,7 +2,7 @@ package com.h5.domain.alarm.controller;
 
 import com.h5.domain.alarm.dto.request.AlarmRequestDto;
 import com.h5.domain.alarm.service.AlarmService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class AlarmRestController {
             @ApiResponse(responseCode = "200", description = "알람 전송 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/")
     public ResultResponse<Void> triggerAlarm(
             @RequestBody(

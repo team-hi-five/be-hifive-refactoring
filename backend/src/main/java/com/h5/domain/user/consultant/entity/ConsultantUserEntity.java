@@ -5,6 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,6 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "consultant_user")
 public class ConsultantUserEntity {
     @Id
@@ -39,17 +45,18 @@ public class ConsultantUserEntity {
     @Column(name = "phone", nullable = false, length = 13)
     private String phone;
 
+    @CreatedDate
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_dttm", nullable = false)
-    private String createDttm;
+    @Column(name = "issued_at", nullable = false, updatable = false)
+    private LocalDateTime issueAt;
 
-    @Column(name = "delete_dttm")
-    private String deleteDttm;
+    @LastModifiedDate
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updateAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "update_dttm")
-    private String updateDttm;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

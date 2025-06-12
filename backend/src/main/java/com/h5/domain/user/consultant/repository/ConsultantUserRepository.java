@@ -14,5 +14,5 @@ public interface ConsultantUserRepository extends JpaRepository<ConsultantUserEn
 
     boolean existsByEmail(String email);
 
-    Optional<ConsultantUserEntity> findByEmailAndDeleteDttmIsNull(String email);
+    Optional<ConsultantUserEntity> findByEmailAndDeletedAtIsNull(String email);
 }

@@ -6,7 +6,8 @@ import com.h5.domain.board.qna.dto.response.QnaListResponse;
 import com.h5.domain.board.qna.entity.QnaCommentEntity;
 import com.h5.domain.board.qna.entity.QnaEntity;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.domain.file.entity.TblType;
+import com.h5.global.file.FileUrlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public class QnaMapper {
                         .content(commentEntity.getContent())
                         .issuedAt(commentEntity.getIssuedAt())
                         .name(commentEntity.getConsultantUser().getName())
-                        .profileImageUrl(fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCT, commentEntity.getConsultantUser().getId()))
+                        .profileImageUrl(fileUrlHelper.getProfileUrlOrDefault(TblType.PCT, commentEntity.getConsultantUser().getId()))
                         .build()
                 )
                 .toList();

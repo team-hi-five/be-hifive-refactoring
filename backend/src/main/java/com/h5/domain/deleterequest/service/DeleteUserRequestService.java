@@ -9,6 +9,7 @@ import com.h5.domain.deleterequest.mapper.DeleteRequestMapper;
 import com.h5.domain.deleterequest.repository.DeleteUserRequestRepository;
 import com.h5.domain.user.parent.entity.ParentUserEntity;
 import com.h5.domain.user.parent.service.ParentUserService;
+import com.h5.global.enumerate.Status;
 import com.h5.global.exception.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class DeleteUserRequestService {
         Optional<DeleteUserRequestEntity> existingRequest =
                 deleteUserRequestRepository.findByParentUser_IdAndStatus(
                         parentUserEntity.getId(),
-                        DeleteUserRequestEntity.Status.P);
+                        Status.PENDING);
 
         if (existingRequest.isPresent()) {
             throw new BusinessException(DomainErrorCode.DELETE_REQUEST_DUPLICATED);
@@ -64,7 +65,7 @@ public class DeleteUserRequestService {
 
         DeleteUserRequestEntity deleteUserRequest = deleteUserRequestRepository.save(
                 DeleteUserRequestEntity.builder()
-                        .status(DeleteUserRequestEntity.Status.P)
+                        .status(Status.PENDING)
                         .parentUserId(parentUserEntity.getId())
                         .consultantUserId(parentUserEntity.getConsultantUserId())
                         .deleteRequestedAt(LocalDateTime.now())
@@ -97,7 +98,7 @@ public class DeleteUserRequestService {
         childUserService.markDeleted(deleteUserRequestEntity.getParentUserId(), deleteDttm);
 
         deleteUserRequestEntity.setDeleteConfirmedAt(deleteDttm);
-        deleteUserRequestEntity.setStatus(DeleteUserRequestEntity.Status.A);
+        deleteUserRequestEntity.setStatus(Status.APPROVED);
 
         deleteUserRequestRepository.save(deleteUserRequestEntity);
     }
@@ -116,7 +117,7 @@ public class DeleteUserRequestService {
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
 
         deleteUserRequestEntity.setDeleteConfirmedAt(LocalDateTime.now());
-        deleteUserRequestEntity.setStatus(DeleteUserRequestEntity.Status.R);
+        deleteUserRequestEntity.setStatus(Status.REJECTED);
 
         deleteUserRequestRepository.save(deleteUserRequestEntity);
     }
@@ -134,7 +135,7 @@ public class DeleteUserRequestService {
     public List<GetMyDeleteResponse> getMyDelete(String consultantEmail) {
         List<DeleteUserRequestEntity> entities =
                 deleteUserRequestRepository.findALlByStatusAndConsultantUser_Email(
-                        DeleteUserRequestEntity.Status.P,
+                        Status.PENDING,
                         consultantEmail
                 );
 

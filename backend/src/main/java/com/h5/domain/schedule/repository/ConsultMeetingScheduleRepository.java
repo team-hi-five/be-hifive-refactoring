@@ -17,24 +17,28 @@ import java.util.Optional;
 @Repository
 public interface ConsultMeetingScheduleRepository extends JpaRepository<ConsultMeetingScheduleEntity, Integer> {
 
-    List<ConsultMeetingScheduleEntity>
-    findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-            Integer childUserId, Integer year, Month month);
+    List<ConsultMeetingScheduleEntity> findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(
+            Integer childUserId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 
-    List<ConsultMeetingScheduleEntity>
-    findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-            List<Integer> childIds, Integer year, Month month);
+    List<ConsultMeetingScheduleEntity> findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+            List<Integer> childIds,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 
-    List<ConsultMeetingScheduleEntity> findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(
+    List<ConsultMeetingScheduleEntity> findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(
             Integer hostId,
             LocalDateTime start,
             LocalDateTime end
     );
 
-    boolean existsByHost_IdAndScheduleAtAndDeletedAtIsNull(
+    boolean existsByHost_IdAndScheduleAtAndEndAtIsNull(
             Integer consultantUserId,
             LocalDateTime dateTime
     );
 
-    Optional<ConsultMeetingScheduleEntity> findByIdAndDeletedAtIsNull(Integer id);
+    Optional<ConsultMeetingScheduleEntity> findByIdAndEndAtIsNull(Integer id);
 }

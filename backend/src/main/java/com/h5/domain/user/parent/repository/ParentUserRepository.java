@@ -10,5 +10,5 @@ public interface ParentUserRepository extends JpaRepository<ParentUserEntity, In
 
     Optional<ParentUserEntity> findEmailByNameAndPhone(String name, String phone);
 
-    Optional<ParentUserEntity> findByEmailAndDeleteDttmIsNull(String email);
+    Optional<ParentUserEntity> findByEmailAndDeletedAtIsNull(String email);
 }

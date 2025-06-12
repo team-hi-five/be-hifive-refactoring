@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -15,7 +16,6 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
 @Table(name = "child_user")
 public class ChildUserEntity {
 
@@ -48,29 +48,28 @@ public class ChildUserEntity {
     @Column(name = "name", nullable = false, length = 10)
     private String name;
 
-    @Column(name = "parent_user_id")
+    @Column(name = "parent_user_id", insertable = false, updatable = false)
     private Integer parentUserId;
-
-    @Column(name = "consultant_user_id")
-    private Integer consultantUserId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "parent_user_id", nullable = false)
     private ParentUserEntity parentUserEntity;
+
+    @Column(name = "consultant_user_id", insertable = false, updatable = false)
+    private Integer consultantUserId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "consultant_user_id", nullable = false)
     private ConsultantUserEntity consultantUserEntity;
 
     @Column(name = "delete_dttm")
-    private String deleteDttm;
+    private LocalDateTime deletedAt;
 
-    @Builder.Default
     @OneToMany(mappedBy = "childUserEntity")
     private Set<GameLogEntity> gameLogEntities = new LinkedHashSet<>();
 
     @Builder
-    public ChildUserEntity(Integer id, String interest, LocalDate firstConsultDt, LocalDate birth, String gender, String additionalInfo, Integer clearChapter, String name, Integer parentUserId, Integer consultantUserId, String deleteDttm, Set<GameLogEntity> gameLogEntities) {
+    public ChildUserEntity(Integer id, String interest, LocalDate firstConsultDt, LocalDate birth, String gender, String additionalInfo, Integer clearChapter, String name, Integer parentUserId, Integer consultantUserId, LocalDateTime deletedAt, Set<GameLogEntity> gameLogEntities) {
         this.id = id;
         this.interest = interest;
         this.firstConsultDt = firstConsultDt;
@@ -81,7 +80,7 @@ public class ChildUserEntity {
         this.name = name;
         this.parentUserId = parentUserId;
         this.consultantUserId = consultantUserId;
-        this.deleteDttm = deleteDttm;
+        this.deletedAt = deletedAt;
         this.gameLogEntities = gameLogEntities;
     }
 }

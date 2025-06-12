@@ -4,8 +4,9 @@ import com.h5.domain.file.dto.request.FileUploadRequest;
 import com.h5.domain.file.dto.response.FileUploadResponse;
 import com.h5.domain.file.dto.response.GetFileUrlResponse;
 import com.h5.domain.file.entity.FileEntity;
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.file.service.FileService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +17,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +36,7 @@ public class FileController {
             @ApiResponse(responseCode = "201", description = "파일 업로드 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResultResponse<FileUploadResponse> uploadFiles(
             @RequestPart("file")
@@ -51,11 +54,12 @@ public class FileController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResultResponse<List<GetFileUrlResponse>> getFileUrls(
             @RequestParam
             @Parameter(description = "파일이 속한 테이블 타입", required = true)
-            FileEntity.TblType tblType,
+            TblType tblType,
             @RequestParam
             @Parameter(description = "파일이 속한 테이블 ID", required = true)
             Integer tblId) {
@@ -67,6 +71,7 @@ public class FileController {
             @ApiResponse(responseCode = "200", description = "다운로드 성공"),
             @ApiResponse(responseCode = "404", description = "파일을 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{fileId}/download")
     public ResponseEntity<Resource> downloadFile(
             @PathVariable
@@ -85,6 +90,7 @@ public class FileController {
             @ApiResponse(responseCode = "200", description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "파일을 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{fileId}")
     public ResultResponse<Void> deleteFile(
             @PathVariable

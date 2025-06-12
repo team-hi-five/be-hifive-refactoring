@@ -9,6 +9,7 @@ import com.h5.domain.board.qna.entity.QnaCommentEntity;
 import com.h5.domain.board.qna.entity.QnaEntity;
 import com.h5.domain.board.qna.mapper.QnaCommentMapper;
 import com.h5.domain.board.qna.repository.QnaCommentRepository;
+import com.h5.domain.board.qna.repository.QnaRepository;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.user.consultant.service.ConsultantUserService;
 import com.h5.global.exception.DomainErrorCode;
@@ -35,7 +36,7 @@ public class QnaCommentService {
     private final QnaCommentMapper qnaCommentMapper;
     private final AuthenticationService authenticationService;
     private final ConsultantUserService consultantUserService;
-    private final QnaService qnaService;
+    private final QnaRepository qnaRepository;
 
     /**
      * 새로운 QnA 댓글을 등록합니다.
@@ -51,16 +52,17 @@ public class QnaCommentService {
     public QnaCommentResponse issueQnaComment(QnaCommentIssueRequest dto) {
         String email = authenticationService.getCurrentUserEmail();
         ConsultantUserEntity consultantUserEntity = consultantUserService.findByEmailOrThrow(email);
-        QnaEntity qnaEntity = qnaService.findQnaEntityByQnaIdOrThrow(dto.getQnaId());
+        QnaEntity qnaEntity = qnaRepository.findByIdAndDeletedAtIsNull(dto.getQnaId())
+                .orElseThrow(() -> new BusinessException(DomainErrorCode.BOARD_NOT_FOUND));
+
+        qnaEntity.setCommentCount(qnaEntity.getCommentCount() + 1);
+        qnaRepository.save(qnaEntity);
 
         QnaCommentEntity qnaCommentEntity = QnaCommentEntity.builder()
                 .content(dto.getContent())
                 .qnaEntity(qnaEntity)
                 .consultantUser(consultantUserEntity)
                 .build();
-
-        // 댓글 수 증가
-        qnaService.updateCommentCount(qnaEntity);
 
         qnaCommentRepository.save(qnaCommentEntity);
         return qnaCommentMapper.toDetailResponse(qnaCommentEntity);

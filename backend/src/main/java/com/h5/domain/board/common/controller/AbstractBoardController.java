@@ -1,7 +1,7 @@
 package com.h5.domain.board.common.controller;
 
 import com.h5.domain.board.common.service.AbstractBoardService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;

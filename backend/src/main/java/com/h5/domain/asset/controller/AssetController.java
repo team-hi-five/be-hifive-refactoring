@@ -5,13 +5,14 @@ import com.h5.domain.asset.dto.response.LoadAssetResponseDto;
 import com.h5.domain.asset.dto.response.LoadCardResponseDto;
 import com.h5.domain.asset.dto.response.LoadChapterAssetResponseDto;
 import com.h5.domain.asset.service.AssetService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class AssetController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "자녀 또는 게임 자산을 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/child/{childUserId}")
     public ResultResponse<LoadAssetResponseDto> getCurrentAsset(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
@@ -48,6 +50,7 @@ public class AssetController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "자녀를 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/child/{childUserId}/cards")
     public ResultResponse<LoadCardResponseDto> getCards(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
@@ -64,6 +67,7 @@ public class AssetController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "자녀를 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/child/{childUserId}/chapters")
     public ResultResponse<LoadChapterAssetResponseDto> getChapterAsset(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
@@ -76,6 +80,7 @@ public class AssetController {
             summary = "현재 클리어된 챕터/스테이지 정보 조회",
             description = "자녀 ID로 해당 자녀의 현재 클리어된 챕터 번호와 스테이지 번호를 반환합니다."
     )
+    @PreAuthorize("isAuthenticated()")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "자녀를 찾을 수 없음")
@@ -96,6 +101,7 @@ public class AssetController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "게임 자산을 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{chapter}/{stage}")
     public ResultResponse<LoadAssetResponseDto> getAssetByStage(
             @Parameter(description = "조회할 챕터 번호", example = "2")
@@ -114,6 +120,7 @@ public class AssetController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "학습용 자산을 찾을 수 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/study/{chapter}")
     public ResultResponse<List<LoadAssetResponseDto>> getStudyAsset(
             @Parameter(description = "조회할 챕터 번호", example = "2")

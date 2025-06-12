@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(AuditingEntityListener.class)  // ← Auditing 리스너 등록
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "notice")
 public class NoticeEntity {
 

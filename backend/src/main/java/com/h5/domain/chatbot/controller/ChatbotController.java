@@ -4,7 +4,7 @@ import com.h5.domain.chatbot.dto.request.InsertChatbotRequest;
 import com.h5.domain.chatbot.dto.response.GetChatbotDatesResponse;
 import com.h5.domain.chatbot.dto.response.GetChatbotResponse;
 import com.h5.domain.chatbot.service.ChatbotService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -36,6 +37,7 @@ public class ChatbotController {
             @ApiResponse(responseCode = "200", description = "챗봇 대화 저장 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터")
     })
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PostMapping
     public ResultResponse<Void> issueChatbot(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -56,6 +58,7 @@ public class ChatbotController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{childUserId}/dates")
     public ResultResponse<GetChatbotDatesResponse> getChatbotDates(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")
@@ -77,6 +80,7 @@ public class ChatbotController {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청 파라미터")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{childUserId}")
     public ResultResponse<GetChatbotResponse> getChatbot(
             @Parameter(description = "조회할 자녀 사용자 ID", example = "123")

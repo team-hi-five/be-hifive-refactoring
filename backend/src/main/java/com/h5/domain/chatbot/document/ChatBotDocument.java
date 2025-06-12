@@ -29,7 +29,7 @@ public class ChatBotDocument {
     @Field("child_user_id")
     private Integer childUserId;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Field("chat_bot_used_at")
     private LocalDateTime chatBotUsedAt;
 

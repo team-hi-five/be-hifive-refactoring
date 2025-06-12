@@ -1,6 +1,7 @@
 package com.h5.domain.board.faq.dto.response;
 
 import com.h5.domain.board.faq.entity.FaqEntity;
+import com.h5.domain.board.faq.entity.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,5 +26,5 @@ public class FaqDetailResponse {
     private final String writer;
 
     @Schema(description = "FAQ 유형", example = "USAGE")
-    private final FaqEntity.Type type;
+    private final Type type;
 }

@@ -3,9 +3,10 @@ package com.h5.domain.deleterequest.mapper;
 import com.h5.domain.deleterequest.dto.response.GetMyDeleteChildResponse;
 import com.h5.domain.deleterequest.dto.response.GetMyDeleteResponse;
 import com.h5.domain.deleterequest.entity.DeleteUserRequestEntity;
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.global.file.FileUrlHelper;
 import com.h5.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -67,7 +68,7 @@ public class DeleteRequestMapper {
                 .childUserId(child.getId())
                 .childName(child.getName())
                 .childUserProfileUrl(
-                        fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCD, child.getId())
+                        fileUrlHelper.getProfileUrlOrDefault(TblType.PCD, child.getId())
                 )
                 .gender(child.getGender())
                 .age(DateUtil.calculateAge(child.getBirth()))

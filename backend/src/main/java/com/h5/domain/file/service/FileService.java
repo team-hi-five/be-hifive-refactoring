@@ -6,6 +6,7 @@ import com.h5.domain.file.dto.response.FileResponse;
 import com.h5.domain.file.dto.response.FileUploadResponse;
 import com.h5.domain.file.dto.response.GetFileUrlResponse;
 import com.h5.domain.file.entity.FileEntity;
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.file.repository.FileRepository;
 import com.h5.global.exception.DomainErrorCode;
 import jakarta.persistence.EntityManager;
@@ -56,7 +57,7 @@ public class FileService {
      * @throws BusinessException 파일 목록과 메타데이터 개수가 일치하지 않을 때, 파일 저장에 실패했을 때 발생
      */
     public FileUploadResponse upload(List<MultipartFile> multipartFileList, FileUploadRequest metaData) {
-        List<FileEntity.TblType> tblTypes = metaData.getTblType();
+        List<TblType> tblTypes = metaData.getTblType();
         List<Integer> tblIds = metaData.getTblId();
         int count = multipartFileList.size();
 
@@ -93,7 +94,7 @@ public class FileService {
      * @return 파일 URL 정보 목록
      */
     @Transactional(readOnly = true)
-    public List<GetFileUrlResponse> getFileUrl(FileEntity.TblType tblType, Integer tblId) {
+    public List<GetFileUrlResponse> getFileUrl(TblType tblType, Integer tblId) {
         Session session = entityManager.unwrap(Session.class);
         session.enableFilter("activeFilter");
 
@@ -210,7 +211,7 @@ public class FileService {
      * @return 영속화 준비가 완료된 FileEntity 객체
      * @throws BusinessException 파일 저장에 실패했을 때 발생
      */
-    private FileEntity buildFileEntity(MultipartFile file, FileEntity.TblType type, Integer id) {
+    private FileEntity buildFileEntity(MultipartFile file, TblType type, Integer id) {
         String originalName = file.getOriginalFilename();
         String uniqueName = UUID.randomUUID().toString().replaceAll("-", "") + "_" + originalName;
 

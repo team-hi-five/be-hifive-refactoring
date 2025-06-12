@@ -2,25 +2,27 @@ package com.h5.domain.schedule.entity;
 
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
+import com.h5.global.enumerate.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "game_meeting_schedule")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class GameMeetingScheduleEntity {
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "game_meeting_schedule")
+public class GameMeetingScheduleEntity implements BaseMeetingSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,18 +41,17 @@ public class GameMeetingScheduleEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
 
     @NotNull
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
     @NotNull
-    @ColumnDefault("'P'")
     @Lob
     @Column(name = "status", nullable = false)
-    private String status;
+    private Status status;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

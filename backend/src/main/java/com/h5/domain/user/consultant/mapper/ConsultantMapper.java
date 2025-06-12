@@ -1,9 +1,10 @@
 package com.h5.domain.user.consultant.mapper;
 
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.user.consultant.dto.response.MyProfileResponse;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.global.file.FileUrlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ public class ConsultantMapper {
         return MyProfileResponse.builder()
                 .profileImgUrl(
                         fileUrlHelper.getProfileUrlOrDefault(
-                                FileEntity.TblType.PCT,
+                                TblType.PCT,
                                 consultantUser.getId()
                         )
                 )

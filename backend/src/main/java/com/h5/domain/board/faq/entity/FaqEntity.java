@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Builder
 public class FaqEntity {
 
@@ -38,12 +40,6 @@ public class FaqEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 6)
     private Type type;
-
-    public enum Type{
-        USAGE,
-        CHILD,
-        CENTER
-    }
 
     @CreatedDate
     @NotNull

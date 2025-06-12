@@ -1,6 +1,7 @@
 package com.h5.domain.board.faq.dto.request;
 
 import com.h5.domain.board.faq.entity.FaqEntity;
+import com.h5.domain.board.faq.entity.Type;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,5 +27,5 @@ public class FaqIssueRequest {
 
     @NotNull(message = "유형을 선택해야 합니다.")
     @Schema(description = "FAQ 유형 (예: USAGE, CHILD, ETC)", example = "CHILD")
-    private FaqEntity.Type type;
+    private Type type;
 }

@@ -14,20 +14,20 @@ import java.util.Optional;
 
 @Repository
 public interface ChildUserRepository extends JpaRepository<ChildUserEntity, Integer> {
-    Optional<List<ChildUserEntity>> findByConsultantUserEntity_IdAndDeleteDttmIsNull(Integer consultantUserEntityId);
+    Optional<List<ChildUserEntity>> findByConsultantUserEntity_IdAndDeletedAtIsNull(Integer consultantUserEntityId);
 
-    Optional<ChildUserEntity> findByIdAndConsultantUserEntity_IdAndDeleteDttmIsNull(int childUserId, int consultantId);
+    Optional<ChildUserEntity> findByIdAndConsultantUserEntity_IdAndDeletedAtIsNull(int childUserId, int consultantId);
 
-    Optional<List<ChildUserEntity>> findByParentUserEntity_IdAndDeleteDttmIsNull(Integer parentUserEntityId);
+    Optional<List<ChildUserEntity>> findByParentUserEntity_IdAndDeletedAtIsNull(Integer parentUserEntityId);
 
-    Optional<ChildUserEntity> findNameByIdAndDeleteDttmIsNull(Integer childUserId);
+    Optional<ChildUserEntity> findNameByIdAndDeletedAtIsNull(Integer childUserId);
 
-    Optional<List<ChildUserEntity>> findAllByParentUserEntity_IdAndDeleteDttmIsNull(Integer parentUserId);
+    Optional<List<ChildUserEntity>> findAllByParentUserEntity_IdAndDeletedAtIsNull(Integer parentUserId);
 
-    Optional<List<ChildUserEntity>> findALlByNameContainingAndDeleteDttmIsNull(@NotNull String name);
+    Optional<List<ChildUserEntity>> findALlByNameContainingAndDeletedAtIsNull(@NotNull String name);
 
     @Modifying
-    @Query("update ChildUserEntity c set c.deleteDttm = :deleteDttm where c.parentUserEntity.id = :parentUserId AND c.deleteDttm IS NULL")
-    void updateChildUserDeleteDttmByParentUserEntity_Id(@Param("deleteDttm") LocalDateTime deleteDttm, @Param("parentUserId") Integer parentUserId);
+    @Query("update ChildUserEntity c set c.deletedAt = :deletedAt where c.parentUserEntity.id = :parentUserId AND c.deletedAt IS NULL")
+    void updateChildUserDeletedAtByParentUserEntity_Id(@Param("deletedAt") LocalDateTime deletedAt, @Param("parentUserId") Integer parentUserId);
 
 }

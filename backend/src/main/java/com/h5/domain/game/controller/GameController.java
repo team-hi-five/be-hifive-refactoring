@@ -3,7 +3,7 @@ package com.h5.domain.game.controller;
 import com.h5.domain.game.dto.request.*;
 import com.h5.domain.game.dto.response.*;
 import com.h5.domain.game.service.GameService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,13 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
 @Tag(name = "Game API", description = "게임 챕터·스테이지·로그 관리 API")
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/games")
 @RequiredArgsConstructor
 public class GameController {
 
@@ -33,6 +34,7 @@ public class GameController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "404", description = "사용자 또는 챕터 정보를 찾을 수 없음")
     })
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PostMapping("/chapters")
     public ResultResponse<StartGameChapterResponse> startGameChapter(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -40,7 +42,7 @@ public class GameController {
                     required = true,
                     content = @Content(schema = @Schema(implementation = StartGameChapterRequest.class))
             )
-            @Valid @org.springframework.web.bind.annotation.RequestBody
+            @Valid @RequestBody
             StartGameChapterRequest startGameChapterRequest
     ) {
         return ResultResponse.success(gameService.startGameChapter(startGameChapterRequest));
@@ -55,6 +57,7 @@ public class GameController {
             @ApiResponse(responseCode = "403", description = "접근 권한 없음"),
             @ApiResponse(responseCode = "404", description = "챕터를 찾을 수 없음")
     })
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PutMapping("/{childGameChapterId}/end")
     public ResultResponse<EndGameChapterResponse> endGameChapter(
             @Parameter(description = "종료할 챕터의 ID", required = true, example = "123")
@@ -72,6 +75,7 @@ public class GameController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "404", description = "챕터 또는 스테이지 정보를 찾을 수 없음")
     })
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PostMapping("/stages")
     public ResultResponse<StartGameStageResponse> startGameStage(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -79,7 +83,7 @@ public class GameController {
                     required = true,
                     content = @Content(schema = @Schema(implementation = StartGameStageRequest.class))
             )
-            @Valid @org.springframework.web.bind.annotation.RequestBody
+            @Valid @RequestBody
             StartGameStageRequest startGameStageRequest
     ) {
         return ResultResponse.success(gameService.startGameStage(startGameStageRequest));
@@ -94,6 +98,7 @@ public class GameController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "404", description = "관련 엔티티를 찾을 수 없음")
     })
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PostMapping("/logs")
     public ResultResponse<SaveGameLogResponse> saveGameLog(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(

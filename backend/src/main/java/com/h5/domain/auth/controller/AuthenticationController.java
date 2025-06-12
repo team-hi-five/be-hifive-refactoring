@@ -5,19 +5,21 @@ import com.h5.domain.auth.dto.response.GetUserRoleResponseDto;
 import com.h5.domain.auth.dto.response.LoginResponseDto;
 import com.h5.domain.auth.dto.response.RefreshAccessTokenResponseDto;
 import com.h5.domain.auth.service.AuthenticationService;
-import com.h5.domain.user.consultant.dto.request.UpdatePwdRequestDto;
-import com.h5.domain.user.consultant.dto.request.UpdateToTempPwdRequestDto;
+import com.h5.domain.user.consultant.dto.request.UpdatePwdRequest;
+import com.h5.domain.user.consultant.dto.request.UpdateToTempPwdRequest;
 import com.h5.domain.user.consultant.dto.response.GetEmailResponse;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -37,6 +39,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "401", description = "인증 실패 (이메일 또는 비밀번호 불일치)")
     })
+    @PermitAll
     @PostMapping("/login")
     public ResultResponse<LoginResponseDto> login(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -57,6 +60,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
             @ApiResponse(responseCode = "400", description = "유효한 액세스 토큰이 없음")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public ResultResponse<Void> logout() {
         authenticationService.logout();
@@ -71,6 +75,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "토큰 재발급 성공"),
             @ApiResponse(responseCode = "401", description = "리프레시 토큰이 만료되었거나 없는 경우")
     })
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/refresh")
     public ResultResponse<RefreshAccessTokenResponseDto> refresh() {
         return ResultResponse.success(authenticationService.refreshAccessToken());
@@ -84,6 +89,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
             @ApiResponse(responseCode = "401", description = "유효하지 않은 액세스 토큰")
     })
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/role")
     public ResultResponse<GetUserRoleResponseDto> getUserRole() {
         return ResultResponse.success(authenticationService.getUserInfo());
@@ -97,6 +103,7 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "이메일 조회 성공"),
             @ApiResponse(responseCode = "404", description = "해당 상담사를 찾을 수 없음")
     })
+    @PermitAll
     @GetMapping("/email")
     public ResultResponse<GetEmailResponse> findEmail(
             @Parameter(description = "조회할 이름", example = "홍길동")
@@ -117,14 +124,15 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "200", description = "임시 비밀번호 발급 및 전송 성공"),
             @ApiResponse(responseCode = "404", description = "해당 상담사 계정을 찾을 수 없음")
     })
+    @PermitAll
     @PostMapping("/password/temporary")
     public ResultResponse<Void> updateToTempPwd(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "임시 비밀번호 발급 요청 DTO",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = UpdateToTempPwdRequestDto.class))
+                    content = @Content(schema = @Schema(implementation = UpdateToTempPwdRequest.class))
             )
-            @Valid @RequestBody UpdateToTempPwdRequestDto dto
+            @Valid @RequestBody UpdateToTempPwdRequest dto
     ) {
         authenticationService.issueTemporaryPassword(dto);
         return ResultResponse.success();
@@ -140,14 +148,15 @@ public class AuthenticationController {
             @ApiResponse(responseCode = "401", description = "기존 비밀번호 불일치"),
             @ApiResponse(responseCode = "404", description = "상담사 계정을 찾을 수 없음")
     })
+    @PreAuthorize("isAnonymous()")
     @PutMapping("/password")
     public ResultResponse<Void> updatePwd(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "비밀번호 변경 요청 DTO",
                     required = true,
-                    content = @Content(schema = @Schema(implementation = UpdatePwdRequestDto.class))
+                    content = @Content(schema = @Schema(implementation = UpdatePwdRequest.class))
             )
-            @Valid @RequestBody UpdatePwdRequestDto dto
+            @Valid @RequestBody UpdatePwdRequest dto
     ) {
         authenticationService.updatePwd(dto);
         return ResultResponse.success();

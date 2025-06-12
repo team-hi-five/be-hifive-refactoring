@@ -1,7 +1,7 @@
 package com.h5.domain.file.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.h5.domain.file.entity.FileEntity;
+import com.h5.domain.file.entity.TblType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +26,7 @@ public class FileResponse {
     private final LocalDateTime uploadAt;
 
     @Schema(description = "파일이 속한 테이블 타입", example = "IMAGE")
-    private final FileEntity.TblType tblType;
+    private final TblType tblType;
 
     @Schema(description = "파일이 속한 테이블의 ID", example = "123")
     private final Integer tblId;

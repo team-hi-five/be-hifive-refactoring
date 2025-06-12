@@ -3,8 +3,7 @@ package com.h5.domain.user.consultant.service;
 import com.github.hyeonjaez.springcommon.exception.BusinessException;
 import com.h5.domain.auth.service.AuthenticationService;
 import com.h5.domain.user.child.service.ChildUserService;
-import com.h5.domain.user.consultant.dto.request.RegisterParentAccountDto;
-import com.h5.domain.consultant.dto.response.*;
+import com.h5.domain.user.consultant.dto.request.RegisterParentAccount;
 import com.h5.domain.user.consultant.dto.response.GetChildResponse;
 import com.h5.domain.user.consultant.dto.response.GetMyChildrenResponse;
 import com.h5.domain.user.consultant.dto.response.MyProfileResponse;
@@ -79,11 +78,11 @@ public class ConsultantUserService {
      * 2. {@link ParentUserService#issueOrGetParent} 호출하여 학부모 계정 생성 또는 기존 계정 조회<br>
      * 3. {@link ChildUserService#issueChild} 호출하여 자녀 계정 생성
      *
-     * @param dto {@link RegisterParentAccountDto} 학부모 및 자녀 정보를 담은 DTO
+     * @param dto {@link RegisterParentAccount} 학부모 및 자녀 정보를 담은 DTO
      * @return {@link RegisterParentAccountResponse} 생성(또는 조회)된 학부모 ID와 자녀 ID를 포함한 DTO
      * @throws BusinessException {@link DomainErrorCode#USER_NOT_FOUND} 인증된 상담사를 찾을 수 없을 경우 발생
      */
-    public RegisterParentAccountResponse registerParentAccount(RegisterParentAccountDto dto) {
+    public RegisterParentAccountResponse registerParentAccount(RegisterParentAccount dto) {
         String email = authenticationService.getCurrentUserEmail();
 
         ConsultantUserEntity consultantUser = consultantUserRepository.findByEmail(email)

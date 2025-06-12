@@ -20,7 +20,6 @@ import java.util.Set;
 @Table(name = "child_game_chapter")
 public class ChildGameChapterEntity {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "child_game_chapter_id", nullable = false)
@@ -37,13 +36,13 @@ public class ChildGameChapterEntity {
     private GameChapterEntity gameChapterEntity;
 
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
     @Column(name = "start_at", nullable = false)
     private LocalDateTime startAt;
 
     @Column(name = "end_at")
     private LocalDateTime endAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "childGameChapterEntity")
     private Set<ChildGameStageEntity> childGameStageEntities = new LinkedHashSet<>();
 

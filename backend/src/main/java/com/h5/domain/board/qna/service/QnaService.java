@@ -211,16 +211,4 @@ public class QnaService extends AbstractBoardService<
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.BOARD_NOT_FOUND));
     }
 
-    /**
-     * QnA 엔티티의 댓글 수를 1 증가시키고 저장합니다.
-     * <p>
-     * 주어진 {@link QnaEntity}의 commentCount 필드를 1 증가시킨 뒤,
-     * 변경된 엔티티를 DB에 저장합니다.
-     *
-     * @param qnaEntity 댓글 수를 업데이트할 {@link QnaEntity}
-     */
-    public void updateCommentCount(QnaEntity qnaEntity) {
-        qnaEntity.setCommentCount(qnaEntity.getCommentCount() + 1);
-        qnaRepository.save(qnaEntity);
-    }
 }

@@ -7,18 +7,22 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 @FilterDef(name = "activeFilter")
 @Filter(name = "activeFilter", condition = "delete_dttm is null")
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "file")
-@Builder
 public class FileEntity {
 
     @Id
@@ -36,17 +40,13 @@ public class FileEntity {
     @Column(name = "origin_file_name", nullable = false)
     private String originFileName;
 
+    @CreatedDate
     @NotNull
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "upload_at")
+    @Column(name = "upload_at", nullable = false, updatable = false)
     private LocalDateTime uploadAt;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-
-    public enum TblType {
-        PCD, PCT, NE, NF, QE, QF, FE, FF, G
-    }
 
     @NotNull
     @Column(name = "tbl_type", nullable = false)

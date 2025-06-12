@@ -5,8 +5,8 @@ import com.h5.domain.auth.dto.request.LoginRequestDto;
 import com.h5.domain.auth.dto.response.GetUserRoleResponseDto;
 import com.h5.domain.auth.dto.response.LoginResponseDto;
 import com.h5.domain.auth.dto.response.RefreshAccessTokenResponseDto;
-import com.h5.domain.user.consultant.dto.request.UpdatePwdRequestDto;
-import com.h5.domain.user.consultant.dto.request.UpdateToTempPwdRequestDto;
+import com.h5.domain.user.consultant.dto.request.UpdatePwdRequest;
+import com.h5.domain.user.consultant.dto.request.UpdateToTempPwdRequest;
 import com.h5.domain.user.consultant.dto.response.GetEmailResponse;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.user.consultant.repository.ConsultantUserRepository;
@@ -15,8 +15,8 @@ import com.h5.domain.user.parent.entity.ParentUserEntity;
 import com.h5.domain.user.parent.repository.ParentUserRepository;
 import com.h5.domain.user.parent.service.ParentUserService;
 import com.h5.global.exception.DomainErrorCode;
-import com.h5.global.redis.RedisService;
-import com.h5.global.util.JwtUtil;
+import com.h5.global.cache.RedisService;
+import com.h5.global.security.JwtUtil;
 import com.h5.global.util.MailUtil;
 import com.h5.global.util.PasswordUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,8 +50,6 @@ public class AuthenticationService {
     private final PasswordUtil passwordUtil;
     private final PasswordEncoder passwordEncoder;
     private final MailUtil mailUtil;
-    private final ParentUserService parentUserService;
-    private final ConsultantUserService consultantUserService;
 
     /**
      * 사용자 이메일과 비밀번호를 인증하고, Access Token과 Refresh Token을 생성 후 저장한다.
@@ -71,12 +69,12 @@ public class AuthenticationService {
         String name;
         boolean isTempPwd;
         if ("ROLE_CONSULTANT".equals(dto.getRole())) {
-            ConsultantUserEntity user = consultantUserRepository.findByEmailAndDeleteDttmIsNull(dto.getEmail())
+            ConsultantUserEntity user = consultantUserRepository.findByEmailAndDeletedAtIsNull(dto.getEmail())
                     .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
             name = user.getName();
             isTempPwd = user.isTempPwd();
         } else {
-            ParentUserEntity user = parentUserRepository.findByEmailAndDeleteDttmIsNull(dto.getEmail())
+            ParentUserEntity user = parentUserRepository.findByEmailAndDeletedAtIsNull(dto.getEmail())
                     .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
             name = user.getName();
             isTempPwd = user.isTempPwd();
@@ -207,7 +205,7 @@ public class AuthenticationService {
      * @throws BusinessException {@link DomainErrorCode#USER_NOT_FOUND} 해당 이메일의 사용자가 없을 경우 발생
      * @throws BusinessException {@link DomainErrorCode#INVALID_ROLE} 유효하지 않은 역할이 전달된 경우 발생
      */
-    public void issueTemporaryPassword(UpdateToTempPwdRequestDto dto) {
+    public void issueTemporaryPassword(UpdateToTempPwdRequest dto) {
         String role = dto.getRole().toLowerCase();
         String email = dto.getEmail();
 
@@ -241,13 +239,13 @@ public class AuthenticationService {
     /**
      * 현재 인증된 사용자의 기존 비밀번호(oldPwd)를 검증하고, 일치할 경우 새 비밀번호(newPwd)로 업데이트합니다.
      *
-     * @param dto {@link UpdatePwdRequestDto} 기존 비밀번호와 새 비밀번호를 포함한 DTO
+     * @param dto {@link UpdatePwdRequest} 기존 비밀번호와 새 비밀번호를 포함한 DTO
      * @throws BusinessException        {@link DomainErrorCode#USER_NOT_FOUND} 인증된 사용자를 찾을 수 없을 경우 발생
      * @throws BusinessException        {@link DomainErrorCode#OLD_PASSWORD_MISMATCH} 기존 비밀번호가 일치하지 않을 경우 발생
      * @throws BusinessException        {@link DomainErrorCode#INVALID_ROLE} 지원하지 않는 역할인 경우 발생
      */
     @Transactional
-    public void updatePwd(UpdatePwdRequestDto dto) {
+    public void updatePwd(UpdatePwdRequest dto) {
         String email = getCurrentUserEmail();
         String role  = getCurrentUserRole();
         String oldPwd = dto.getOldPwd();
@@ -306,10 +304,19 @@ public class AuthenticationService {
         String role = getCurrentUserRole();
         String email = getCurrentUserEmail();
 
-        if (role.equals("ROLE_PARENT")) {
-            return parentUserService.findByEmailOrThrow(email).getConsultantUserEntity().getCenter().getId();
+        if ("ROLE_PARENT".equals(role)) {
+            ParentUserEntity parent = parentUserRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+            return parent
+                    .getConsultantUserEntity()
+                    .getCenter()
+                    .getId();
         } else {
-            return consultantUserService.findByEmailOrThrow(email).getCenter().getId();
+            ConsultantUserEntity consultant = consultantUserRepository.findByEmail(email)
+                    .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+            return consultant
+                    .getCenter()
+                    .getId();
         }
     }
 

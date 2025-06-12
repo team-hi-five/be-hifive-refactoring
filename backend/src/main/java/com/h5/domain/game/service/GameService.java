@@ -25,6 +25,7 @@ import com.h5.domain.game.repository.ChildGameStageRepository;
 import com.h5.domain.game.repository.GameLogRepository;
 import com.h5.domain.statistic.entity.StatisticEntity;
 import com.h5.domain.statistic.repository.StatisticRepository;
+import com.h5.domain.user.child.service.ChildUserService;
 import com.h5.global.exception.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,12 +46,12 @@ public class GameService {
     private final ChildGameChapterRepository childGameChapterRepository;
     private final ChildGameStageRepository childGameStageRepository;
     private final GameLogRepository gameLogRepository;
-    private final ChildUserRepository childUserRepository;
     private final GameChapterRepository gameChapterRepository;
     private final GameStageRepository gameStageRepository;
     private final StatisticRepository statisticRepository;
     private final EmotionRepository emotionRepository;
     private final AuthenticationService authenticationService;
+    private final ChildUserService childUserService;
 
     /**
      * 새로운 게임 챕터를 시작하고, 해당 기록의 ID를 반환합니다.
@@ -60,8 +61,7 @@ public class GameService {
      * @throws BusinessException USER_NOT_FOUND 또는 GAME_NOT_FOUND
      */
     public StartGameChapterResponse startGameChapter(StartGameChapterRequest req) {
-        ChildUserEntity childUser = childUserRepository.findById(req.getChildUserId())
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+        ChildUserEntity childUser = childUserService.findByIdOrThrow(req.getChildUserId());
 
         GameChapterEntity gameChapter = gameChapterRepository.findById(req.getGameChapterId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
@@ -86,12 +86,10 @@ public class GameService {
      * @throws BusinessException GAME_NOT_FOUND 또는 접근 권한이 없는 경우 GAME_ACCESS_DENY
      */
     public EndGameChapterResponse endGameChapter(Integer childGameChapterId) {
-        ChildGameChapterEntity childGameChapterEntity = childGameChapterRepository.findById(childGameChapterId)
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
+        String email = authenticationService.getCurrentUserEmail();
 
-        if (!childGameChapterEntity.getChildUserEntity().getParentUserEntity().getEmail().equals(authenticationService.getCurrentUserEmail())) {
-            throw new BusinessException(DomainErrorCode.GAME_ACCESS_DENY);
-        }
+        ChildGameChapterEntity childGameChapterEntity = childGameChapterRepository.findByIdAndChildUserEntity_ParentUserEntity_Email(childGameChapterId, email)
+                .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_ACCESS_DENY));
 
         childGameChapterEntity.setEndAt(LocalDateTime.now());
         childGameChapterRepository.save(childGameChapterEntity);
@@ -139,8 +137,7 @@ public class GameService {
     public SaveGameLogResponse saveGameLog(SaveGameLogRequest req) {
         ChildGameStageEntity stage = childGameStageRepository.findById(req.getChildGameStageId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
-        ChildUserEntity child = childUserRepository.findById(req.getChildUserId())
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+        ChildUserEntity child = childUserService.findByIdOrThrow(req.getChildUserId());
         GameStageEntity gameStage = gameStageRepository.findById(req.getGameStageId())
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
 
@@ -186,8 +183,11 @@ public class GameService {
      */
     private void updateAnalytics(ChildGameChapterEntity chapter) {
         List<ChildGameStageEntity> stages = childGameStageRepository
-                .findAllByChildGameChapterEntity_Id(chapter.getId())
-                .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
+                .findAllByChildGameChapterEntity_Id(chapter.getId());
+
+        if (stages.isEmpty()) {
+            throw new BusinessException(DomainErrorCode.GAME_NOT_FOUND);
+        }
 
         int childUserId    = chapter.getChildUserEntity().getId();
         LocalDateTime startAt     = chapter.getStartAt();
@@ -282,7 +282,7 @@ public class GameService {
                 .findAllByChildUserEntity_IdAndGameStageEntity_IdAndSubmitAtBetween(
                         userId, stageId, start, end
                 )
-                .orElse(Collections.emptyList());
+                .orElse(List.of());
         logs.sort(Comparator.comparing(GameLogEntity::getSubmitAt));
         return logs;
     }
@@ -314,8 +314,7 @@ public class GameService {
                 .orElseGet(() -> {
                     EmotionEntity emo = emotionRepository.findById(emotionId)
                             .orElseThrow(() -> new BusinessException(DomainErrorCode.GAME_NOT_FOUND));
-                    ChildUserEntity child = childUserRepository.findById(childUserId)
-                            .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
+                    ChildUserEntity child = childUserService.findByIdOrThrow(childUserId);
                     StatisticEntity initial = StatisticEntity.builder()
                             .emotionEntity(emo)
                             .childUserEntity(child)

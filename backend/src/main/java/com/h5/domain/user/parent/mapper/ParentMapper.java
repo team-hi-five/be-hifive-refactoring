@@ -1,13 +1,14 @@
 package com.h5.domain.user.parent.mapper;
 
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.domain.user.parent.dto.info.ConsultantInfo;
-import com.h5.domain.user.parent.dto.info.MyChildInfo;
-import com.h5.domain.user.parent.dto.info.MyInfo;
+import com.h5.domain.user.parent.dto.response.info.ConsultantInfo;
+import com.h5.domain.user.parent.dto.response.info.MyChildInfo;
+import com.h5.domain.user.parent.dto.response.info.MyInfo;
 import com.h5.domain.user.parent.entity.ParentUserEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.global.file.FileUrlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +53,7 @@ public class ParentMapper {
 
             myChildInfos.add(MyChildInfo.builder()
                     .childId(child.getId())
-                    .profileImgUrl(fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCD, child.getId()))
+                    .profileImgUrl(fileUrlHelper.getProfileUrlOrDefault(TblType.PCD, child.getId()))
                     .name(child.getName())
                     .age(age)
                     .gender(child.getGender())

@@ -6,13 +6,14 @@ import com.h5.domain.deleterequest.dto.response.DeleteUserRequestAprproveRespons
 import com.h5.domain.deleterequest.dto.response.DeleteUserRequestRejectResponse;
 import com.h5.domain.deleterequest.dto.response.GetMyDeleteResponse;
 import com.h5.domain.deleterequest.service.DeleteUserRequestService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class DeleteUserRequestController {
             summary = "삭제 요청 생성",
             description = "부모 사용자가 탈퇴 요청을 생성합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_PARENT')")
     @PostMapping
     public ResultResponse<DeleteRequestResponse> deleteRequest() {
         String parentEmail = authenticationService.getCurrentUserEmail();
@@ -40,6 +42,7 @@ public class DeleteUserRequestController {
             summary = "삭제 요청 승인",
             description = "상담사가 지정된 탈퇴 요청을 승인합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @PatchMapping("/{deleteUserRequestId}/approve")
     public ResultResponse<DeleteUserRequestAprproveResponse> approve(
             @Parameter(description = "승인할 탈퇴 요청 ID", required = true)
@@ -53,6 +56,7 @@ public class DeleteUserRequestController {
             summary = "삭제 요청 거절",
             description = "상담사가 지정된 탈퇴 요청을 거절합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @PatchMapping("/{deleteUserRequestId}/reject")
     public ResultResponse<DeleteUserRequestRejectResponse> reject(
             @Parameter(description = "거절할 탈퇴 요청 ID", required = true)
@@ -66,6 +70,7 @@ public class DeleteUserRequestController {
             summary = "내가 받은 탈퇴 요청 조회",
             description = "상담사가 자신에게 접수된 탈퇴 요청 목록을 조회합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @GetMapping
     public ResultResponse<List<GetMyDeleteResponse>> getMyDelete() {
         String consultantEmail = authenticationService.getCurrentUserEmail();

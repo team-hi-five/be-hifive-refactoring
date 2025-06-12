@@ -17,25 +17,29 @@ import java.util.Optional;
 @Repository
 public interface GameMeetingScheduleRepository extends JpaRepository<GameMeetingScheduleEntity, Integer> {
 
-    List<GameMeetingScheduleEntity> findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-            Integer childUserId, Integer year, Month month
+    List<GameMeetingScheduleEntity> findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(
+            Integer childUserId,
+            LocalDateTime start,
+            LocalDateTime end
     );
 
-    List<GameMeetingScheduleEntity>
-    findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-            List<Integer> childIds, Integer year, Month month);
+    List<GameMeetingScheduleEntity> findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+            List<Integer> childIds,
+            LocalDateTime start,
+            LocalDateTime end
+    );
 
-    List<GameMeetingScheduleEntity> findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(
+    List<GameMeetingScheduleEntity> findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(
             Integer hostId,
             LocalDateTime start,
             LocalDateTime end
     );
 
-    boolean existsByHost_IdAndScheduleAtAndDeletedAtIsNull(
+    boolean existsByHost_IdAndScheduleAtAndEndAtIsNull(
             Integer consultantUserId,
             LocalDateTime dateTime
     );
 
-    Optional<GameMeetingScheduleEntity> findByIdAndDeletedAtIsNull(Integer id);
+    Optional<GameMeetingScheduleEntity> findByIdAndEndAtIsNull(Integer id);
 }
 

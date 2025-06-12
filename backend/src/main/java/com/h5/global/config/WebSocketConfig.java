@@ -1,6 +1,8 @@
 package com.h5.global.config;
 
-import com.h5.global.interceptor.CustomHandshakeInterceptor;
+import com.h5.global.websocket.CustomHandshakeInterceptor;
+import com.h5.global.websocket.CustomHandshakeHandler;
+import com.h5.global.websocket.SessionChannelInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

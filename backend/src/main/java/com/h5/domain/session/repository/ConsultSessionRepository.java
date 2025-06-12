@@ -9,8 +9,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ConsultSessionRepository extends JpaRepository<ConsultMeetingScheduleEntity, Integer> {
-
-    @Modifying
-    @Query("UPDATE ConsultMeetingScheduleEntity c SET c.sessionId = :sessionId, c.status = 'A' WHERE c.id = :meetingId")
-    void updateSessionId(@Param("meetingId") int meetingId, @Param("sessionId") String sessionId);
 }

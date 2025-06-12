@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ChildGameStageRepository extends JpaRepository<ChildGameStageEntity, Integer> {
-    Optional<List<ChildGameStageEntity>> findAllByChildGameChapterEntity_Id(int childGameChapterId);
+    List<ChildGameStageEntity> findAllByChildGameChapterEntity_Id(int childGameChapterId);
 }

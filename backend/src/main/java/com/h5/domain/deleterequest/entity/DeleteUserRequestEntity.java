@@ -2,9 +2,11 @@ package com.h5.domain.deleterequest.entity;
 
 import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.user.parent.entity.ParentUserEntity;
+import com.h5.global.enumerate.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -26,10 +28,6 @@ public class DeleteUserRequestEntity {
 
     @Column(name = "delete_confirmed_at")
     private LocalDateTime deleteConfirmedAt;
-
-    public enum Status {
-        P, A, R
-    }
 
     @NotNull
     @Enumerated(EnumType.STRING)

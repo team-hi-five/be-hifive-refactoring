@@ -1,6 +1,7 @@
 package com.h5.domain.file.dto.request;
 
 import com.h5.domain.file.entity.FileEntity;
+import com.h5.domain.file.entity.TblType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class FileUploadRequest {
             description = "업로드할 파일이 속한 테이블 타입 리스트",
             example = "[IMAGE, DOCUMENT]"
     )
-    private List<FileEntity.TblType> tblType;
+    private List<TblType> tblType;
 
     @NotEmpty(message = "tblId 목록은 하나 이상 필요합니다.")
     @Schema(

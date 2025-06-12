@@ -4,10 +4,11 @@ import com.h5.domain.board.qna.dto.request.QnaCommentIssueRequest;
 import com.h5.domain.board.qna.dto.request.QnaCommentUpdateRequest;
 import com.h5.domain.board.qna.dto.response.QnaCommentResponse;
 import com.h5.domain.board.qna.service.QnaCommentService;
-import com.h5.global.response.ResultResponse;
+import com.h5.global.dto.response.ResultResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +23,7 @@ public class QnaCommentController {
             summary = "댓글 작성",
             description = "특정 QnA 게시글에 댓글을 작성합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @PostMapping
     public ResultResponse<QnaCommentResponse> createComment(
             @RequestBody QnaCommentIssueRequest dto
@@ -33,6 +35,7 @@ public class QnaCommentController {
             summary = "댓글 수정",
             description = "기존 댓글의 내용을 수정합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @PutMapping("/{id}")
     public ResultResponse<QnaCommentResponse> updateComment(
             @PathVariable Integer id,
@@ -45,6 +48,7 @@ public class QnaCommentController {
             summary = "댓글 삭제",
             description = "기존 댓글을 논리 삭제 처리합니다."
     )
+    @PreAuthorize("hasAuthority('ROLE_CONSULTANT')")
     @DeleteMapping("/{id}")
     public ResultResponse<Void> deleteComment(
             @PathVariable Integer id

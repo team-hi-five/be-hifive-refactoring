@@ -9,6 +9,7 @@ import com.h5.domain.schedule.dto.response.ScheduleDatesResponse;
 import com.h5.domain.schedule.dto.response.ScheduleResponse;
 import com.h5.domain.schedule.entity.ConsultMeetingScheduleEntity;
 import com.h5.domain.schedule.entity.GameMeetingScheduleEntity;
+import com.h5.domain.schedule.mapper.ScheduleMapper;
 import com.h5.domain.schedule.repository.ConsultMeetingScheduleRepository;
 import com.h5.domain.schedule.repository.GameMeetingScheduleRepository;
 import com.h5.domain.user.child.entity.ChildUserEntity;
@@ -17,6 +18,7 @@ import com.h5.domain.user.consultant.entity.ConsultantUserEntity;
 import com.h5.domain.user.consultant.service.ConsultantUserService;
 import com.h5.domain.user.parent.entity.ParentUserEntity;
 import com.h5.domain.user.parent.service.ParentUserService;
+import com.h5.global.enumerate.Status;
 import com.h5.global.exception.DomainErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class ScheduleService {
     private final ConsultantUserService consultantUserService;
     private final ChildUserService childUserService;
     private final ParentUserService parentUserService;
+    private final ScheduleMapper scheduleMapper;
 
     /**
      * 로그인한 상담사의 특정 날짜별 모든 스케줄 조회.
@@ -53,19 +56,20 @@ public class ScheduleService {
                 .findByEmailOrThrow(authenticationService.getCurrentUserEmail())
                 .getId();
 
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end   = date.plusDays(1).atStartOfDay();
+        YearMonth yearMonth = YearMonth.of(date.getYear(), date.getMonth());
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end   = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
         List<ScheduleResponse> consults = consultMeetingScheduleRepository
-                .findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(consultantId, start, end)
+                .findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(consultantId, start, end)
                 .stream()
-                .map(this::mapConsult)
+                .map(scheduleMapper::ofConsult)
                 .toList();
 
         List<ScheduleResponse> games = gameMeetingScheduleRepository
-                .findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(consultantId, start, end)
+                .findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(consultantId, start, end)
                 .stream()
-                .map(this::mapGame)
+                .map(scheduleMapper::ofGame)
                 .toList();
 
         return Stream.concat(consults.stream(), games.stream())
@@ -83,14 +87,17 @@ public class ScheduleService {
      */
     @Transactional(readOnly = true)
     public ScheduleDatesResponse getScheduleDatesByChildUserId(Integer childUserId, Integer year, Integer month) {
-        Month m = Month.of(month);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end   = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+
         List<LocalDateTime> dates = Stream.concat(
                         consultMeetingScheduleRepository
-                                .findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(childUserId, year, m)
+                                .findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(childUserId, start, end)
                                 .stream()
                                 .map(ConsultMeetingScheduleEntity::getScheduleAt),
                         gameMeetingScheduleRepository
-                                .findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(childUserId, year, m)
+                                .findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(childUserId, start, end)
                                 .stream()
                                 .map(GameMeetingScheduleEntity::getScheduleAt)
                 )
@@ -112,18 +119,20 @@ public class ScheduleService {
      * @return 해당 월의 상세 스케줄 목록 (시간순 정렬)
      */
     public List<ScheduleResponse> getSchedulesByChildUserId(Integer childUserId, Integer year, Integer month) {
-        Month m = Month.of(month);
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end   = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
         List<ScheduleResponse> consults = consultMeetingScheduleRepository
-                .findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(childUserId, year, m)
+                .findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(childUserId, start, end)
                 .stream()
-                .map(this::mapConsult)
+                .map(scheduleMapper::ofConsult)
                 .toList();
 
         List<ScheduleResponse> games = gameMeetingScheduleRepository
-                .findAllByChildUserEntity_IdAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(childUserId, year, m)
+                .findAllByChildUserEntity_IdAndScheduleAtBetweenAndEndAtIsNull(childUserId, start, end)
                 .stream()
-                .map(this::mapGame)
+                .map(scheduleMapper::ofGame)
                 .toList();
 
         return Stream.concat(consults.stream(), games.stream())
@@ -147,12 +156,12 @@ public class ScheduleService {
 
         Set<LocalTime> booked = Stream.concat(
                         consultMeetingScheduleRepository
-                                .findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(consultantId, start, end)
+                                .findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(consultantId, start, end)
                                 .stream()
                                 .map(ConsultMeetingScheduleEntity::getScheduleAt)
                                 .map(LocalDateTime::toLocalTime),
                         gameMeetingScheduleRepository
-                                .findAllByHost_IdAndScheduleAtBetweenAndDeletedAtIsNull(consultantId, start, end)
+                                .findAllByHost_IdAndScheduleAtBetweenAndEndAtIsNull(consultantId, start, end)
                                 .stream()
                                 .map(GameMeetingScheduleEntity::getScheduleAt)
                                 .map(LocalDateTime::toLocalTime)
@@ -188,7 +197,7 @@ public class ScheduleService {
                     .childUserEntity(child)
                     .parentUserEntity(parent)
                     .scheduleAt(scheduleIssueRequest.getScheduleAt())
-                    .status("P")
+                    .status(Status.PENDING)
                     .build();
             id = consultMeetingScheduleRepository.save(entity).getId();
         } else {
@@ -196,7 +205,7 @@ public class ScheduleService {
                     .host(host)
                     .childUserEntity(child)
                     .scheduleAt(scheduleIssueRequest.getScheduleAt())
-                    .status("P")
+                    .status(Status.PENDING)
                     .build();
             id = gameMeetingScheduleRepository.save(entity).getId();
         }
@@ -250,16 +259,16 @@ public class ScheduleService {
     public void deleteSchedule(String type, Integer id) {
         if ("consult".equals(type)) {
             ConsultMeetingScheduleEntity entity = consultMeetingScheduleRepository
-                    .findByIdAndDeletedAtIsNull(id)
+                    .findByIdAndEndAtIsNull(id)
                     .orElseThrow(() -> new BusinessException(DomainErrorCode.SCHEDULE_NOT_FOUND));
-            entity.setDeletedAt(LocalDateTime.now());
+            entity.setEndAt(LocalDateTime.now());
             consultMeetingScheduleRepository.save(entity);
 
         } else if ("game".equals(type)) {
             GameMeetingScheduleEntity entity = gameMeetingScheduleRepository
-                    .findByIdAndDeletedAtIsNull(id)
+                    .findByIdAndEndAtIsNull(id)
                     .orElseThrow(() -> new BusinessException(DomainErrorCode.SCHEDULE_NOT_FOUND));
-            entity.setDeletedAt(LocalDateTime.now());
+            entity.setEndAt(LocalDateTime.now());
             gameMeetingScheduleRepository.save(entity);
 
         } else {
@@ -276,22 +285,23 @@ public class ScheduleService {
      */
     public List<ScheduleResponse> getSchedulesByParentUserId(Integer year, Integer month) {
         ParentUserEntity parent = parentUserService.findByEmailOrThrow(authenticationService.getCurrentUserEmail());
-        Month m = Month.of(month);
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end   = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
         List<ScheduleResponse> consults = consultMeetingScheduleRepository
-                .findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(),
-                        year, m)
+                .findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), start, end)
                 .stream()
-                .map(this::mapConsult)
+                .map(scheduleMapper::ofConsult)
                 .toList();
 
         List<ScheduleResponse> games = gameMeetingScheduleRepository
-                .findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(),
-                        year, m)
+                .findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), start, end)
                 .stream()
-                .map(this::mapGame)
+                .map(scheduleMapper::ofGame)
                 .toList();
 
         return Stream.concat(consults.stream(), games.stream())
@@ -308,17 +318,20 @@ public class ScheduleService {
      */
     public ScheduleDatesResponse getScheduleDatesByParentUserId(Integer year, Integer month) {
         ParentUserEntity parent = parentUserService.findByEmailOrThrow(authenticationService.getCurrentUserEmail());
-        Month m = Month.of(month);
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime start = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime end   = yearMonth.atEndOfMonth().atTime(23, 59, 59);
 
         List<LocalDateTime> dates = Stream.concat(
                         consultMeetingScheduleRepository
-                                .findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-                                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), year, m)
+                                .findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+                                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), start, end)
                                 .stream()
                                 .map(ConsultMeetingScheduleEntity::getScheduleAt),
                         gameMeetingScheduleRepository
-                                .findAllByChildUserEntity_IdInAndScheduleAt_YearAndScheduleAt_MonthAndDeletedAtIsNull(
-                                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), year, m)
+                                .findAllByChildUserEntity_IdInAndScheduleAtBetweenAndEndAtIsNull(
+                                        parent.getChildUserEntities().stream().map(ChildUserEntity::getId).toList(), start, end)
                                 .stream()
                                 .map(GameMeetingScheduleEntity::getScheduleAt)
                 )
@@ -333,8 +346,8 @@ public class ScheduleService {
 
     private void ensureNotBooked(String type, int consultantId, LocalDateTime at) {
         boolean conflict = switch (type) {
-            case "consult" -> consultMeetingScheduleRepository.existsByHost_IdAndScheduleAtAndDeletedAtIsNull(consultantId, at);
-            case "game"    -> gameMeetingScheduleRepository.existsByHost_IdAndScheduleAtAndDeletedAtIsNull(consultantId, at);
+            case "consult" -> consultMeetingScheduleRepository.existsByHost_IdAndScheduleAtAndEndAtIsNull(consultantId, at);
+            case "game"    -> gameMeetingScheduleRepository.existsByHost_IdAndScheduleAtAndEndAtIsNull(consultantId, at);
             default        -> throw new BusinessException(DomainErrorCode.INVALID_SCHEDULE_TYPE);
         };
         if (conflict) {
@@ -342,32 +355,4 @@ public class ScheduleService {
         }
     }
 
-    private ScheduleResponse mapConsult(ConsultMeetingScheduleEntity e) {
-        return ScheduleResponse.builder()
-                .scheduleId(e.getId())
-                .scheduleAt(e.getScheduleAt())
-                .type("consult")
-                .consultantName(e.getHost().getName())
-                .childUserId(e.getChildUserEntity().getId())
-                .childName(e.getChildUserEntity().getName())
-                .parentName(e.getParentUserEntity().getName())
-                .parentEmail(e.getParentUserEntity().getEmail())
-                .status(e.getStatus())
-                .build();
-    }
-
-    private ScheduleResponse mapGame(GameMeetingScheduleEntity e) {
-        var child = e.getChildUserEntity();
-        return ScheduleResponse.builder()
-                .scheduleId(e.getId())
-                .scheduleAt(e.getScheduleAt())
-                .type("game")
-                .consultantName(e.getHost().getName())
-                .childUserId(child.getId())
-                .childName(child.getName())
-                .parentName(child.getParentUserEntity().getName())
-                .parentEmail(child.getParentUserEntity().getEmail())
-                .status(e.getStatus())
-                .build();
-    }
 }

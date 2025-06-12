@@ -3,7 +3,8 @@ package com.h5.domain.board.qna.mapper;
 import com.h5.domain.board.qna.dto.response.QnaCommentResponse;
 import com.h5.domain.board.qna.entity.QnaCommentEntity;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.domain.file.entity.TblType;
+import com.h5.global.file.FileUrlHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class QnaCommentMapper {
                 .content(qnaCommentEntity.getContent())
                 .issuedAt(qnaCommentEntity.getIssuedAt())
                 .name(qnaCommentEntity.getConsultantUser().getName())
-                .profileImageUrl(fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCT, qnaCommentEntity.getConsultantUser().getId()))
+                .profileImageUrl(fileUrlHelper.getProfileUrlOrDefault(TblType.PCT, qnaCommentEntity.getConsultantUser().getId()))
                 .build();
     }
 }

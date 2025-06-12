@@ -34,11 +34,11 @@ public class ChildStudyStageEntity {
     private ChildStudyChapterEntity childStudyChapterEntity;
 
     @NotNull
-    @Column(name = "start_dttm", nullable = false)
-    private LocalDateTime startDttm;
+    @Column(name = "start_at", nullable = false)
+    private LocalDateTime startAt;
 
-    @Column(name = "end_dttm")
-    private LocalDateTime endDttm;
+    @Column(name = "end_at")
+    private LocalDateTime endAt;
 
     @Builder.Default
     @OneToMany(mappedBy = "childStudyStageEntity")

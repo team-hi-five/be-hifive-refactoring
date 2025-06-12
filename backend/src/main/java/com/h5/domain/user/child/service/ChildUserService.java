@@ -6,8 +6,8 @@ import com.h5.domain.user.child.dto.response.UpdateChildStageResponse;
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.user.child.mapper.ChildMapper;
 import com.h5.domain.user.child.repository.ChildUserRepository;
-import com.h5.domain.user.child.dto.request.ModifyChildRequestDto;
-import com.h5.domain.user.consultant.dto.request.RegisterParentAccountDto;
+import com.h5.domain.user.child.dto.request.ModifyChildRequest;
+import com.h5.domain.user.consultant.dto.request.RegisterParentAccount;
 import com.h5.domain.user.consultant.dto.response.GetChildResponse;
 import com.h5.domain.user.consultant.dto.response.GetMyChildrenResponse;
 import com.h5.domain.user.child.dto.response.ModifyChildResponse;
@@ -46,12 +46,12 @@ public class ChildUserService {
      * 부모 계정 등록 과정에서 전달받은 DTO, 부모 ID, 상담사 ID를 기반으로
      * 새로운 자녀(ChildUserEntity)를 생성하고 저장합니다.
      *
-     * @param dto               {@link RegisterParentAccountDto} 등록 요청 데이터를 담은 DTO
+     * @param dto               {@link RegisterParentAccount} 등록 요청 데이터를 담은 DTO
      * @param parentUserId      학부모(Parent) 엔티티의 ID
      * @param consultantUserId  상담사(Consultant) 엔티티의 ID
      * @return 생성된 자녀 엔티티의 식별자(ID)
      */
-    public Integer issueChild(@Valid RegisterParentAccountDto dto,
+    public Integer issueChild(@Valid RegisterParentAccount dto,
                               Integer parentUserId,
                               Integer consultantUserId) {
         ChildUserEntity childUser = ChildUserEntity.builder()
@@ -78,7 +78,7 @@ public class ChildUserService {
      */
     public List<GetMyChildrenResponse> getChildrenByConsultant(Integer consultantUserId) {
         List<ChildUserEntity> childUserEntityList = childUserRepository
-                .findByConsultantUserEntity_IdAndDeleteDttmIsNull(consultantUserId)
+                .findByConsultantUserEntity_IdAndDeletedAtIsNull(consultantUserId)
                 .orElse(List.of());
 
         return childUserEntityList.stream()
@@ -97,7 +97,7 @@ public class ChildUserService {
     public GetChildResponse getChildDetail(@Valid int childUserId,
                                            Integer consultantUserId) {
         ChildUserEntity childUser = childUserRepository
-                .findByIdAndConsultantUserEntity_IdAndDeleteDttmIsNull(
+                .findByIdAndConsultantUserEntity_IdAndDeletedAtIsNull(
                         childUserId, consultantUserId)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
 
@@ -108,12 +108,12 @@ public class ChildUserService {
      * 주어진 자녀 ID를 기반으로 자녀 엔티티를 조회한 뒤,
      * 요청 DTO의 관심사 및 추가 정보를 업데이트하고 저장합니다.
      *
-     * @param dto           {@link ModifyChildRequestDto} 자녀 수정 요청 DTO
+     * @param dto           {@link ModifyChildRequest} 자녀 수정 요청 DTO
      * @param childUserId   수정 대상 자녀의 ID
      * @return {@link ModifyChildResponse} 수정된 자녀 ID를 담은 응답 DTO
      * @throws BusinessException 자녀가 존재하지 않을 경우 발생
      */
-    public ModifyChildResponse updateChild(@Valid ModifyChildRequestDto dto,
+    public ModifyChildResponse updateChild(@Valid ModifyChildRequest dto,
                                            Integer childUserId) {
         ChildUserEntity childUser = childUserRepository.findById(childUserId)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
@@ -136,7 +136,7 @@ public class ChildUserService {
      */
     public List<SearchChildResponse> searchChildByName(@Valid String name) {
         List<ChildUserEntity> childUserEntityList = childUserRepository
-                .findALlByNameContainingAndDeleteDttmIsNull(name)
+                .findALlByNameContainingAndDeletedAtIsNull(name)
                 .orElse(List.of());
 
         return childUserEntityList.stream()
@@ -151,7 +151,7 @@ public class ChildUserService {
      * @param deleteDttm 삭제 시간
      */
     public void markDeleted(Integer parentUserId, LocalDateTime deleteDttm) {
-        childUserRepository.updateChildUserDeleteDttmByParentUserEntity_Id(deleteDttm, parentUserId);
+        childUserRepository.updateChildUserDeletedAtByParentUserEntity_Id(deleteDttm, parentUserId);
 
     }
 
@@ -206,7 +206,7 @@ public class ChildUserService {
      */
     public ChildUserEntity findByIdOrThrow(Integer id) {
         return childUserRepository
-                .findNameByIdAndDeleteDttmIsNull(id)
+                .findNameByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new BusinessException(DomainErrorCode.USER_NOT_FOUND));
     }
 

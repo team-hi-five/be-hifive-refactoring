@@ -1,11 +1,12 @@
 package com.h5.domain.user.child.mapper;
 
+import com.h5.domain.file.entity.TblType;
 import com.h5.domain.user.child.entity.ChildUserEntity;
 import com.h5.domain.user.consultant.dto.response.GetChildResponse;
 import com.h5.domain.user.consultant.dto.response.GetMyChildrenResponse;
 import com.h5.domain.user.child.dto.response.SearchChildResponse;
 import com.h5.domain.file.entity.FileEntity;
-import com.h5.global.helper.FileUrlHelper;
+import com.h5.global.file.FileUrlHelper;
 import com.h5.global.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ public class ChildMapper {
         return GetMyChildrenResponse.builder()
                 .childUserId(child.getId())
                 .profileImgUrl(
-                        fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCD, child.getId()))
+                        fileUrlHelper.getProfileUrlOrDefault(TblType.PCD, child.getId()))
                 .childName(child.getName())
                 .birth(child.getBirth())
                 .age(DateUtil.calculateAge(child.getBirth()))
@@ -47,7 +48,7 @@ public class ChildMapper {
         return GetChildResponse.builder()
                 .childUserId(child.getId())
                 .profileImgUrl(
-                        fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCD, child.getId()))
+                        fileUrlHelper.getProfileUrlOrDefault(TblType.PCD, child.getId()))
                 .childName(child.getName())
                 .age(DateUtil.calculateAge(child.getBirth()))
                 .birth(child.getBirth())
@@ -71,7 +72,7 @@ public class ChildMapper {
         return SearchChildResponse.builder()
                 .childUserId(child.getId())
                 .childProfileUrl(
-                        fileUrlHelper.getProfileUrlOrDefault(FileEntity.TblType.PCD, child.getId()))
+                        fileUrlHelper.getProfileUrlOrDefault(TblType.PCD, child.getId()))
                 .childUserName(child.getName())
                 .parentUserName(child.getParentUserEntity().getName())
                 .parentUserEmail(child.getParentUserEntity().getEmail())

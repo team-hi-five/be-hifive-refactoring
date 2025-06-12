@@ -5,7 +5,7 @@ import com.h5.domain.alarm.dto.AlarmDto;
 import com.h5.domain.alarm.dto.request.AlarmRequestDto;
 import com.h5.domain.user.child.repository.ChildUserRepository;
 import com.h5.domain.user.consultant.repository.ConsultantUserRepository;
-import com.h5.global.config.SessionChannelInterceptor;
+import com.h5.global.websocket.SessionChannelInterceptor;
 import com.h5.global.exception.DomainErrorCode;
 import com.h5.domain.user.parent.repository.ParentUserRepository;
 import lombok.RequiredArgsConstructor;

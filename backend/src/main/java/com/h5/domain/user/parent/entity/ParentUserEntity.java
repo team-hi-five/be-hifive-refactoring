@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -17,7 +20,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "parent_user")
 public class ParentUserEntity {
 
@@ -46,16 +49,18 @@ public class ParentUserEntity {
     @Column(name = "phone", nullable = false, length = 13)
     private String phone;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "create_dttm")
-    private LocalDateTime createDttm;
+    @CreatedDate
+    @NotNull
+    @Column(name = "issued_at", nullable = false, updatable = false)
+    private LocalDateTime issueAt;
 
-    @Column(name = "delete_dttm")
-    private LocalDateTime deleteDttm;
+    @LastModifiedDate
+    @NotNull
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updateAt;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "update_dttm", insertable = false, updatable = false)
-    private LocalDateTime updateDttm;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @NotNull
     @Column(name = "consultant_user_id")
@@ -72,15 +77,15 @@ public class ParentUserEntity {
     private Set<ChildUserEntity> childUserEntities = new HashSet<>();
 
     @Builder
-    public ParentUserEntity(Integer id, String name, String email, String pwd, String phone, LocalDateTime createDttm, LocalDateTime deleteDttm, LocalDateTime updateDttm, Integer consultantUserId, boolean tempPwd) {
+    public ParentUserEntity(Integer id, String name, String email, String pwd, String phone, LocalDateTime issueAt, LocalDateTime updateAt, LocalDateTime deletedAt, Integer consultantUserId, boolean tempPwd) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.pwd = pwd;
         this.phone = phone;
-        this.createDttm = createDttm;
-        this.deleteDttm = deleteDttm;
-        this.updateDttm = updateDttm;
+        this.issueAt = issueAt;
+        this.updateAt = updateAt;
+        this.deletedAt = deletedAt;
         this.consultantUserId = consultantUserId;
         this.tempPwd = tempPwd;
     }

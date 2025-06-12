@@ -1,5 +1,6 @@
 package com.h5.domain.schedule.dto.response;
 
+import com.h5.global.enumerate.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,5 +39,5 @@ public class ScheduleResponse {
     private final String parentEmail;
 
     @Schema(description = "스케줄 상태", example = "P")
-    private final String status;
+    private final Status status;
 }
